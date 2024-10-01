@@ -9,4 +9,6 @@ public class Position
     public ProductGroup? ProductGroup { get; set; }
     public List<PharmaceuticalGroup> PharmaceuticalGroups { get; set; } = [];
     public int? Quantity { get; set; }
+    public Pharmacy? Pharmacy { get; set; }
+    public Price? Price { get; set; }
 }
