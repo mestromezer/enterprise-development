@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pharmacies.Domain", "Pharmacies.Domain\Pharmacies.Domain.csproj", "{A5D501BA-BE66-4D26-A80C-EC8B109B4A08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FB201E75-0B0F-4269-AB24-7688630978B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D62C65D9-45EF-40EF-8367-2A5A42DDC36C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pharmacies.Domain.Tests", "Pharmacies.Domain.Tests\Pharmacies.Domain.Tests.csproj", "{0A58E555-E29F-444C-81CC-E8C322574B09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5D501BA-BE66-4D26-A80C-EC8B109B4A08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5D501BA-BE66-4D26-A80C-EC8B109B4A08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5D501BA-BE66-4D26-A80C-EC8B109B4A08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5D501BA-BE66-4D26-A80C-EC8B109B4A08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A58E555-E29F-444C-81CC-E8C322574B09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A58E555-E29F-444C-81CC-E8C322574B09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A58E555-E29F-444C-81CC-E8C322574B09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A58E555-E29F-444C-81CC-E8C322574B09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A5D501BA-BE66-4D26-A80C-EC8B109B4A08} = {FB201E75-0B0F-4269-AB24-7688630978B9}
+		{0A58E555-E29F-444C-81CC-E8C322574B09} = {D62C65D9-45EF-40EF-8367-2A5A42DDC36C}
+	EndGlobalSection
+EndGlobal
