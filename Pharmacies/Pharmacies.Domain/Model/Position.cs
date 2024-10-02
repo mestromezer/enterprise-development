@@ -4,7 +4,7 @@ namespace Pharmacies.Model;
 
 public class Position
 {
-    public int? Code { get; set; }
+    public required int Code { get; init; }
     public string? Name { get; set; }
     public ProductGroup? ProductGroup { get; set; }
     public List<PharmaceuticalGroup> PharmaceuticalGroups { get; set; } = [];

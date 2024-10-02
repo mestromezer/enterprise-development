@@ -5,28 +5,31 @@ namespace Pharmacies.Domain.Tests;
 
 public class Tests
 {
-    [Fact]
-    public void Should_Return_AllPositionsForSpecificPharmacy_OrderedByName()
+   [Fact]
+    public void ShouldReturnAllPositionsForSpecificPharmacyOrderedByName()
     {
         // Arrange
-        var pharmacy = Seed.Pharmacies.First(p => p.Number == 1);
+        const int pharmacyNumber = 1;
+        const int expectedCount = 2;
 
         // Act
         var positions = Seed.Positions
-            .Where(p => p.Pharmacy?.Number == pharmacy.Number)
+            .Where(p => p.Pharmacy?.Number == pharmacyNumber)
             .OrderBy(p => p.Name)
             .ToList();
 
         // Assert
         Assert.NotEmpty(positions);
         Assert.True(positions.SequenceEqual(positions.OrderBy(p => p.Name)));
+        Assert.Equal(expectedCount, positions.Count);
     }
 
     [Fact]
-    public void Should_Return_AllPharmaciesWithSpecificDrug_AndTheirQuantities()
+    public void ShouldReturnAllPharmaciesWithSpecificDrugAndTheirQuantities()
     {
         // Arrange
         const string drugName = "Аспирин";
+        const int expectedCount = 2;
 
         // Act
         var pharmaciesWithDrug = Seed.Positions
@@ -37,33 +40,39 @@ public class Tests
         // Assert
         Assert.NotEmpty(pharmaciesWithDrug);
         pharmaciesWithDrug.ForEach(ph => Assert.NotNull(ph.Name));
+        Assert.Single(pharmaciesWithDrug);
     }
 
     [Fact]
-    public void Should_Return_AverageCostOfDrugsPerPharmaceuticalGroup_ForEachPharmacy()
+    public void ShouldReturnAverageCostOfDrugsPerPharmaceuticalGroupForEachPharmacy()
     {
+        const decimal expectedAvg = 2042.49m;
+
         // Act
-        var averageCosts = Seed.Positions
-            .GroupBy(p => 
-                new { p.Pharmacy?.Name, PharmaceuticalGroup = p.PharmaceuticalGroups.FirstOrDefault()?.Name }
-            )
-            .Select(g => new
-            {
-                Pharmacy = g.Key.Name,
-                PharmaceuticalGroup = g.Key.PharmaceuticalGroup,
-                AverageCost = g.Average(p => p.Price?.Cost)
-            })
-            .ToList();
+        var averageCosts = 
+            (from position in Seed.Positions
+                from pharmaceuticalGroup in position.PharmaceuticalGroups
+                group position by new { Pharmacy = position.Pharmacy?.Name, Group = pharmaceuticalGroup.Name } into grouped
+                select new
+                {
+                    grouped.Key.Pharmacy,
+                    grouped.Key.Group,
+                    AverageCost = grouped.Average(p => p.Price?.Cost)
+                }).ToList();
 
         // Assert
         Assert.NotEmpty(averageCosts);
-        Assert.NotEmpty(averageCosts);
+        averageCosts.ForEach(avgCost => Assert.NotNull(avgCost.Group));
+        var sum = averageCosts.Sum(rec => rec.AverageCost);
+        Assert.True(sum - expectedAvg < 0.1m);
     }
 
+
     [Fact]
-    public void Should_Return_Top5PharmaciesBySalesVolume_WithinPeriod()
+    public void ShouldReturnTop5PharmaciesBySalesVolumeWithinPeriod()
     {
         // Arrange
+        const decimal expectedVolume = 7500m;
         const string drugName = "Аспирин";
         var startDate = new DateTime(2023, 9, 1);
         var endDate = new DateTime(2023, 9, 30);
@@ -78,10 +87,11 @@ public class Tests
 
         // Assert
         Assert.True(topPharmacies.Count <= 5);
+        Assert.True(expectedVolume - topPharmacies.First().TotalVolume < 0.01m);
     }
 
     [Fact]
-    public void Should_Return_PharmacyList_InSpecificArea_ThatSoldDrugMoreThanGivenVolume()
+    public void ShouldReturnPharmacyListInSpecificAreaThatSoldDrugMoreThanGivenVolume()
     {
         // Arrange
         const string drugName = "Аспирин";
@@ -105,9 +115,10 @@ public class Tests
     }
 
     [Fact]
-    public void Should_Return_PharmacyList_ThatSellsDrugAtMinimumPrice()
+    public void ShouldReturnPharmacyListThatSellsDrugAtMinimumPrice()
     {
         // Arrange
+        const string expectedMinName = "Аптека №1";
         const string drugName = "Аспирин";
 
         // Act
@@ -116,7 +127,7 @@ public class Tests
             .Min(p => p.Price?.Cost);
 
         var pharmaciesWithMinPrice = Seed.Positions
-            .Where(p => p.Price != null && p.Name == drugName && p.Price.Cost == minPrice)
+            .Where(p => p is { Price: not null, Name: drugName } && p.Price.Cost == minPrice)
             .Select(p => p.Pharmacy?.Name)
             .Distinct()
             .ToList();
@@ -124,5 +135,6 @@ public class Tests
         // Assert
         Assert.NotEmpty(pharmaciesWithMinPrice);
         Assert.True(pharmaciesWithMinPrice.Count > 0);
+        Assert.True(expectedMinName == pharmaciesWithMinPrice.First());
     }
 }

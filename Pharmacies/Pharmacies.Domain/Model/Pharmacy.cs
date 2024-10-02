@@ -2,7 +2,7 @@
 
 public class Pharmacy
 {
-    public int? Number { get; set; }
+    public required int Number { get; init; }
     public string? Name { get; set; }
     public string? Phone { get; set; }
     public string? Address { get; set; }
