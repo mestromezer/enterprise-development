@@ -29,7 +29,6 @@ public class Tests
     {
         // Arrange
         const string drugName = "Аспирин";
-        const int expectedCount = 2;
 
         // Act
         var pharmaciesWithDrug = Seed.Positions
@@ -46,7 +45,7 @@ public class Tests
     [Fact]
     public void ShouldReturnAverageCostOfDrugsPerPharmaceuticalGroupForEachPharmacy()
     {
-        const decimal expectedAvg = 2042.49m;
+        const decimal expectedAvg = 2042.5m;
 
         // Act
         var averageCosts = 
@@ -63,8 +62,7 @@ public class Tests
         // Assert
         Assert.NotEmpty(averageCosts);
         averageCosts.ForEach(avgCost => Assert.NotNull(avgCost.Group));
-        var sum = averageCosts.Sum(rec => rec.AverageCost);
-        Assert.True(sum - expectedAvg < 0.1m);
+        Assert.Equal(expectedAvg, averageCosts.Sum(rec => rec.AverageCost));
     }
 
 
@@ -87,7 +85,7 @@ public class Tests
 
         // Assert
         Assert.True(topPharmacies.Count <= 5);
-        Assert.True(expectedVolume - topPharmacies.First().TotalVolume < 0.01m);
+        Assert.Equal(topPharmacies.Sum(p => p.TotalVolume), expectedVolume);
     }
 
     [Fact]
