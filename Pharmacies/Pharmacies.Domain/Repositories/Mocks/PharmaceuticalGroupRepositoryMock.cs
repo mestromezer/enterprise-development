@@ -2,40 +2,46 @@
 using Pharmacies.Interfaces;
 using Pharmacies.Model.Reference;
 
-namespace Pharmacies.Repositories.Mocks;
-
-public class PharmaceuticalGroupRepositoryMock : IRepository<PharmaceuticalGroup, int>
+namespace Pharmacies.Repositories.Mocks
 {
-    private readonly ConcurrentDictionary<int, PharmaceuticalGroup> _pharmaceuticalGroups = new();
-
-    public Task<List<PharmaceuticalGroup>> GetAsList()
+    public class PharmaceuticalGroupRepositoryMock : IRepository<PharmaceuticalGroup, int>
     {
-        return Task.FromResult(_pharmaceuticalGroups.Values.ToList());
-    }
+        private readonly ConcurrentDictionary<int, PharmaceuticalGroup> _pharmaceuticalGroups = new();
+        private int _currentId = 0;
 
-    public Task<List<PharmaceuticalGroup>> GetAsList(Func<PharmaceuticalGroup, bool> predicate)
-    {
-        return Task.FromResult(_pharmaceuticalGroups.Values.Where(predicate).ToList());
-    }
-
-    public Task Add(PharmaceuticalGroup newRecord)
-    {
-        _pharmaceuticalGroups.TryAdd(newRecord.Id, newRecord);
-        return Task.CompletedTask;
-    }
-
-    public Task Delete(int key)
-    {
-        _pharmaceuticalGroups.TryRemove(key, out _);
-        return Task.CompletedTask;
-    }
-
-    public Task Update(PharmaceuticalGroup newValue)
-    {
-        if (_pharmaceuticalGroups.ContainsKey(newValue.Id))
+        public Task<List<PharmaceuticalGroup>> GetAsList()
         {
-            _pharmaceuticalGroups[newValue.Id] = newValue;
+            return Task.FromResult(_pharmaceuticalGroups.Values.ToList());
         }
-        return Task.CompletedTask;
+
+        public Task<List<PharmaceuticalGroup>> GetAsList(Func<PharmaceuticalGroup, bool> predicate)
+        {
+            return Task.FromResult(_pharmaceuticalGroups.Values.Where(predicate).ToList());
+        }
+
+        public Task Add(PharmaceuticalGroup newRecord)
+        {
+            if (newRecord.Id == -1)
+            {
+                newRecord.Id = ++_currentId;
+            }
+            _pharmaceuticalGroups.TryAdd(newRecord.Id, newRecord);
+            return Task.CompletedTask;
+        }
+
+        public Task Delete(int key)
+        {
+            _pharmaceuticalGroups.TryRemove(key, out _);
+            return Task.CompletedTask;
+        }
+
+        public Task Update(PharmaceuticalGroup newValue)
+        {
+            if (_pharmaceuticalGroups.ContainsKey(newValue.Id))
+            {
+                _pharmaceuticalGroups[newValue.Id] = newValue;
+            }
+            return Task.CompletedTask;
+        }
     }
 }

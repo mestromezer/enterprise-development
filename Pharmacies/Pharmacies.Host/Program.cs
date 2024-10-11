@@ -1,3 +1,5 @@
+using System.Reflection;
+using Microsoft.OpenApi.Models;
 using Pharmacies.Interfaces;
 using Pharmacies.Model;
 using Pharmacies.Model.Reference;
@@ -18,14 +20,25 @@ builder.Services.AddSingleton<IRepository<Price, int>, PriceRepositoryMock>();
 builder.Services.AddSingleton<IRepository<PharmaceuticalGroup, int>, PharmaceuticalGroupRepositoryMock>();
 builder.Services.AddSingleton<IRepository<ProductGroup, int>, ProductGroupRepositoryMock>();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Pharmacies API", Version = "v1" });
+        
+    // Включаем XML комментарии (если используются)
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    app.UseSwaggerUI(c => 
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pharmacies API V1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pharmacies API v1");
     });
 }
 

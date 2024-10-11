@@ -2,7 +2,7 @@ namespace Pharmacies.Model;
 
 public class Price
 {
-    public required int Id { get; init; }
+    public required int Id { get; set; }
     public string? Manufacturer { get; set; }
     public DateTime? ProductionTime { get; set; }
     public bool? IfCash { get; set; }

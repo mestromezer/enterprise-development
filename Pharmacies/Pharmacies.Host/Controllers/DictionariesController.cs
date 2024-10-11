@@ -1,120 +1,147 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pharmacies.Interfaces;
 using Pharmacies.Model.Reference;
+using Swashbuckle.AspNetCore.Annotations;
 
-namespace Pharmacies.Controllers;
-
-[Route("api/[controller]/{dictionaryType}")]
-[ApiController]
-public class DictionariesController(
-    IRepository<ProductGroup, int> productGroupRepository,
-    IRepository<PharmaceuticalGroup, int> pharmaceuticalGroupRepository)
-    : ControllerBase
+namespace Pharmacies.Controllers
 {
-    [HttpGet("")]
-    public async Task<ActionResult<IEnumerable<object>>> GetDictionaryItems(string dictionaryType)
+    /// <summary>
+    /// Контроллер для работы с сущностями, которые являются словарями
+    /// </summary>
+    [Route("api/[controller]/{dictionaryType}")]
+    [ApiController]
+    public class DictionariesController(
+        IRepository<ProductGroup, int> productGroupRepository,
+        IRepository<PharmaceuticalGroup, int> pharmaceuticalGroupRepository)
+        : ControllerBase
     {
-        return dictionaryType.ToLower() switch
+        /// <summary>
+        /// Получить все записи словаря по его типу (product_group или pharmaceutical_group)
+        /// </summary>
+        /// <param name="dictionaryType">Тип словаря: product_group или pharmaceutical_group</param>
+        [HttpGet("")]
+        [SwaggerOperation(Summary = "Получить все записи словаря по типу", Description = "Доступные типы словарей: product_group, pharmaceutical_group.")]
+        [SwaggerResponse(200, "Успешный ответ с данными словаря")]
+        [SwaggerResponse(400, "Неправильный тип словаря")]
+        public async Task<ActionResult<IEnumerable<object>>> GetDictionaryItems([FromRoute] string dictionaryType)
         {
-            "product_group" => Ok(await productGroupRepository.GetAsList()),
-            "pharmaceutical_group" => Ok(await pharmaceuticalGroupRepository.GetAsList()),
-            _ => BadRequest("Invalid dictionary type.")
-        };
-    }
-
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<object>> GetDictionaryItem(string dictionaryType, int id)
-    {
-        switch (dictionaryType.ToLower())
-        {
-            case "product_group":
-                var productGroup = (await productGroupRepository.GetAsList(pg => pg.Id == id)).FirstOrDefault();
-                if (productGroup == null) return NotFound();
-                return Ok(productGroup);
-
-            case "pharmaceutical_group":
-                var pharmaceuticalGroup =
-                    (await pharmaceuticalGroupRepository.GetAsList(pg => pg.Id == id)).FirstOrDefault();
-                if (pharmaceuticalGroup == null) return NotFound();
-                return Ok(pharmaceuticalGroup);
-
-            default:
-                return BadRequest("Invalid dictionary type.");
+            return dictionaryType.ToLower() switch
+            {
+                "product_group" => Ok(await productGroupRepository.GetAsList()),
+                "pharmaceutical_group" => Ok(await pharmaceuticalGroupRepository.GetAsList()),
+                _ => BadRequest("Invalid dictionary type.")
+            };
         }
-    }
 
-    [HttpPost("")]
-    public async Task<ActionResult<object>> CreateDictionaryItem(string dictionaryType, object newItem)
-    {
-        switch (dictionaryType.ToLower())
+        /// <summary>
+        /// Получить элемент словаря по типу и Id
+        /// </summary>
+        /// <param name="dictionaryType">Тип словаря: product_group или pharmaceutical_group</param>
+        /// <param name="id">Идентификатор элемента</param>
+        [HttpGet("{id:int}")]
+        [SwaggerOperation(Summary = "Получить элемент словаря по типу и Id", Description = "Доступные типы словарей: product_group, pharmaceutical_group.")]
+        [SwaggerResponse(200, "Успешный ответ с данными элемента")]
+        [SwaggerResponse(404, "Элемент не найден")]
+        [SwaggerResponse(400, "Неправильный тип словаря")]
+        public async Task<ActionResult<object>> GetDictionaryItem([FromRoute] string dictionaryType, [FromRoute] int id)
         {
-            case "product_group":
-                if (newItem is ProductGroup productGroup)
-                {
+            switch (dictionaryType.ToLower())
+            {
+                case "product_group":
+                    var productGroup = (await productGroupRepository.GetAsList(pg => pg.Id == id)).FirstOrDefault();
+                    if (productGroup == null) return NotFound();
+                    return Ok(productGroup);
+
+                case "pharmaceutical_group":
+                    var pharmaceuticalGroup =
+                        (await pharmaceuticalGroupRepository.GetAsList(pg => pg.Id == id)).FirstOrDefault();
+                    if (pharmaceuticalGroup == null) return NotFound();
+                    return Ok(pharmaceuticalGroup);
+
+                default:
+                    return BadRequest("Invalid dictionary type.");
+            }
+        }
+
+        /// <summary>
+        /// Добавить новый элемент в словарь
+        /// </summary>
+        /// <param name="dictionaryType">Тип словаря: product_group или pharmaceutical_group</param>
+        /// <param name="newItem">Новый элемент для добавления</param>
+        [HttpPost("")]
+        [SwaggerOperation(Summary = "Добавить элемент в словарь", Description = "Доступные типы словарей: product_group, pharmaceutical_group.")]
+        [SwaggerResponse(201, "Элемент успешно создан")]
+        [SwaggerResponse(400, "Неправильный тип словаря или элемент")]
+        public async Task<ActionResult<object>> CreateDictionaryItem([FromRoute] string dictionaryType, [FromBody] string newItem)
+        {
+            switch (dictionaryType.ToLower())
+            {
+                case "product_group":
+                    var productGroup = new ProductGroup() { Id = -1, Name = newItem };
                     await productGroupRepository.Add(productGroup);
-                    return CreatedAtAction(nameof(GetDictionaryItem),
-                        new { dictionaryType = "product_group", id = productGroup.Id }, productGroup);
-                }
+                    return Ok();
 
-                break;
-
-            case "pharmaceutical_group":
-                if (newItem is PharmaceuticalGroup pharmaceuticalGroup)
-                {
+                case "pharmaceutical_group":
+                    var pharmaceuticalGroup = new PharmaceuticalGroup() { Id = -1, Name = newItem };
                     await pharmaceuticalGroupRepository.Add(pharmaceuticalGroup);
-                    return CreatedAtAction(nameof(GetDictionaryItem),
-                        new { dictionaryType = "pharmaceutical_group", id = pharmaceuticalGroup.Id },
-                        pharmaceuticalGroup);
-                }
+                    return Ok();
+            }
 
-                break;
+            return BadRequest("Invalid dictionary type or item.");
         }
 
-        return BadRequest("Invalid dictionary type or item.");
-    }
-
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateDictionaryItem(string dictionaryType, int id, object updatedItem)
-    {
-        switch (dictionaryType.ToLower())
+        /// <summary>
+        /// Обновить элемент словаря
+        /// </summary>
+        /// <param name="dictionaryType">Тип словаря: product_group или pharmaceutical_group</param>
+        /// <param name="id">Идентификатор элемента</param>
+        /// <param name="updatedItem">Обновленный элемент</param>
+        [HttpPut("{id:int}")]
+        [SwaggerOperation(Summary = "Обновить элемент словаря", Description = "Доступные типы словарей: product_group, pharmaceutical_group.")]
+        [SwaggerResponse(204, "Элемент успешно обновлен")]
+        [SwaggerResponse(400, "Неправильный тип словаря или элемент")]
+        public async Task<IActionResult> UpdateDictionaryItem([FromRoute] string dictionaryType, [FromRoute] int id, [FromBody] string updatedItem)
         {
-            case "product_group":
-                if (updatedItem is ProductGroup productGroup && id == productGroup.Id)
-                {
-                    await productGroupRepository.Update(productGroup);
-                    return NoContent();
-                }
+            switch (dictionaryType.ToLower())
+            {
+                case "product_group":
+                    var productGroup = new ProductGroup() { Id = id, Name = updatedItem };
+                    await productGroupRepository.Add(productGroup);
+                    return Ok();
 
-                break;
+                case "pharmaceutical_group":
+                    var pharmaceuticalGroup = new PharmaceuticalGroup() { Id = id, Name = updatedItem };
+                    await pharmaceuticalGroupRepository.Add(pharmaceuticalGroup);
+                    return Ok();
+            }
 
-            case "pharmaceutical_group":
-                if (updatedItem is PharmaceuticalGroup pharmaceuticalGroup && id == pharmaceuticalGroup.Id)
-                {
-                    await pharmaceuticalGroupRepository.Update(pharmaceuticalGroup);
-                    return NoContent();
-                }
-
-                break;
+            return BadRequest("Invalid dictionary type or item.");
         }
 
-        return BadRequest("Invalid dictionary type or item.");
-    }
-
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteDictionaryItem(string dictionaryType, int id)
-    {
-        switch (dictionaryType.ToLower())
+        /// <summary>
+        /// Удалить элемент словаря по Id
+        /// </summary>
+        /// <param name="dictionaryType">Тип словаря: product_group или pharmaceutical_group</param>
+        /// <param name="id">Идентификатор элемента</param>
+        [HttpDelete("{id:int}")]
+        [SwaggerOperation(Summary = "Удалить элемент словаря по Id", Description = "Доступные типы словарей: product_group, pharmaceutical_group.")]
+        [SwaggerResponse(204, "Элемент успешно удален")]
+        [SwaggerResponse(400, "Неправильный тип словаря")]
+        public async Task<IActionResult> DeleteDictionaryItem([FromRoute] string dictionaryType, [FromRoute] int id)
         {
-            case "product_group":
-                await productGroupRepository.Delete(id);
-                return NoContent();
+            switch (dictionaryType.ToLower())
+            {
+                case "product_group":
+                    await productGroupRepository.Delete(id);
+                    return NoContent();
 
-            case "pharmaceutical_group":
-                await pharmaceuticalGroupRepository.Delete(id);
-                return NoContent();
+                case "pharmaceutical_group":
+                    await pharmaceuticalGroupRepository.Delete(id);
+                    return NoContent();
 
-            default:
-                return BadRequest("Invalid dictionary type.");
+                default:
+                    return BadRequest("Invalid dictionary type.");
+            }
         }
     }
 }

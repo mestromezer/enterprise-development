@@ -4,6 +4,9 @@ using Pharmacies.Model;
 
 namespace Pharmacies.Controllers;
 
+/// <summary>
+/// CRUD Pharmacies
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class PharmaciesController(IRepository<Pharmacy, int> repository) : ControllerBase
