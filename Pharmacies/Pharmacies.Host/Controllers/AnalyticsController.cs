@@ -16,7 +16,7 @@ public class AnalyticsController(
     /// <summary>
     ///  Вывести сведения о всех препаратах в заданной аптеке, упорядочить по названию.
     /// </summary>
-    /// <param name="pharmacyNumber">Идентификатор аптеки</param>
+    /// <param name="pharmacyNumber">Pharmacy number</param>
     [HttpGet("pharmacy/{pharmacyNumber}/positions")]
     public async Task<ActionResult<IEnumerable<Position>>> GetPositionsByPharmacy(int pharmacyNumber)
     {
@@ -26,7 +26,7 @@ public class AnalyticsController(
             .ToList();
 
         if (positions.Count == 0)
-            return NotFound("Препараты не найдены.");
+            return NotFound("No drugs found.");
 
         return Ok(positions);
     }
@@ -34,7 +34,7 @@ public class AnalyticsController(
     /// <summary>
     /// Вывести для данного препарата подробный список всех аптек с указанием количества препарата в аптеках.
     /// </summary>
-    /// <param name="drugName">Название препарата</param>
+    /// <param name="drugName">Drug name</param>
     [HttpGet("drug/{drugName}/pharmacies")]
     public async Task<ActionResult<IEnumerable<object>>> GetPharmaciesWithDrugQuantity(string drugName)
     {
@@ -44,7 +44,7 @@ public class AnalyticsController(
             .ToList();
 
         if (pharmaciesWithDrug.Count == 0)
-            return NotFound("Препараты не найдены.");
+            return NotFound("No drugs found.");
 
         return Ok(pharmaciesWithDrug);
     }
@@ -68,7 +68,7 @@ public class AnalyticsController(
                 }).ToList();
 
         if (averageCosts.Count == 0)
-            return NotFound("Не найдено записей для расчета.");
+            return NotFound("No records found.");
 
         return Ok(averageCosts);
     }
@@ -76,9 +76,9 @@ public class AnalyticsController(
     /// <summary>
     /// Вывести топ 5 аптек по количеству и объёму продаж данного препарата за указанный период времени.
     /// </summary>
-    /// <param name="drugName">Название препарата</param>
-    /// <param name="startDate">Дата начиная с</param>
-    /// <param name="endDate">Дата заканчивая</param>
+    /// <param name="drugName">Drug name</param>
+    /// <param name="startDate">Start date</param>
+    /// <param name="endDate">End date</param>
     [HttpGet("drug/{drugName}/top-pharmacies")]
     public async Task<ActionResult<IEnumerable<object>>> GetTopPharmaciesBySales(string drugName, DateTime startDate,
         DateTime endDate)
@@ -91,7 +91,7 @@ public class AnalyticsController(
             .ToList();
 
         if (topPharmacies.Count == 0)
-            return NotFound("Продажи не найдены.");
+            return NotFound("No sales found.");
 
         return Ok(topPharmacies);
     }
@@ -99,9 +99,9 @@ public class AnalyticsController(
     /// <summary>
     /// Вывести список аптек указанного района, продавших заданный препарат более указанного объёма.
     /// </summary>
-    /// <param name="drugName">Название препарата</param>
-    /// <param name="district">Название района</param>
-    /// <param name="minVolume">Минимальный объем</param>
+    /// <param name="drugName">Drug name</param>
+    /// <param name="district">District</param>
+    /// <param name="minVolume">Minimum volume</param>
     [HttpGet("drug/{drugName}/district/{district}/min-volume/{minVolume}")]
     public async Task<ActionResult<IEnumerable<object>>> GetPharmaciesByVolume(string drugName, string district, int minVolume)
     {
@@ -116,7 +116,7 @@ public class AnalyticsController(
             .ToList();
 
         if (!pharmacies.Any())
-            return NotFound("Аптеки не найдены.");
+            return NotFound("No pharmacies found.");
 
         return Ok(pharmacies);
     }
@@ -124,7 +124,7 @@ public class AnalyticsController(
     /// <summary>
     /// Вывести список аптек, в которых указанный препарат продается с минимальной ценой.
     /// </summary>
-    /// <param name="drugName">Название препарата</param>
+    /// <param name="drugName">Drug name</param>
     [HttpGet("drug/{drugName}/min-price")]
     public async Task<ActionResult<IEnumerable<object>>> GetPharmaciesWithMinPrice(string drugName)
     {
@@ -141,7 +141,7 @@ public class AnalyticsController(
             .ToList();
 
         if (!pharmaciesWithMinPrice.Any())
-            return NotFound("Аптеки с минимальной ценой не найдены.");
+            return NotFound("No pharmacies found.");
 
         return Ok(pharmaciesWithMinPrice);
     }

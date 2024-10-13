@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pharmacies.Interfaces;
-using Pharmacies.Model;
+using Pharmacies.Application.Dto;
+using Pharmacies.Application.Interfaces;
 
 namespace Pharmacies.Controllers;
 
@@ -9,19 +9,26 @@ namespace Pharmacies.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class PositionsController(IRepository<Position, int> repository) : ControllerBase
+public class PositionsController(IEntityService<PositionDto, int> positionService) : ControllerBase
 {
+    /// <summary>
+    /// Read
+    /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
+    public async Task<ActionResult<IEnumerable<PositionDto>>> GetPositions()
     {
-        var positions = await repository.GetAsList();
+        var positions = await positionService.GetAll();
         return Ok(positions);
     }
 
+    /// <summary>
+    /// Read
+    /// </summary>
+    /// <param name="code">Key</param>
     [HttpGet("{code:int}")]
-    public async Task<ActionResult<Position>> GetPosition(int code)
+    public async Task<ActionResult<PositionDto>> GetPosition(int code)
     {
-        var position = (await repository.GetAsList(p => p.Code == code)).FirstOrDefault();
+        var position = await positionService.GetByKey(code);
         if (position == null)
         {
             return NotFound();
@@ -30,41 +37,54 @@ public class PositionsController(IRepository<Position, int> repository) : Contro
         return Ok(position);
     }
 
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="positionDto">Data</param>
     [HttpPost]
-    public async Task<ActionResult<Position>> CreatePosition(Position position)
+    public async Task<ActionResult<PositionDto>> CreatePosition(PositionDto positionDto)
     {
-        await repository.Add(position);
-        return CreatedAtAction(nameof(GetPosition), new { code = position.Code }, position);
+        await positionService.Add(positionDto);
+        return CreatedAtAction(nameof(GetPosition), new { code = positionDto.Code }, positionDto);
     }
 
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="code">Key</param>
+    /// <param name="updatedPositionDto">Updated data</param>
     [HttpPut("{code:int}")]
-    public async Task<IActionResult> UpdatePosition(int code, Position updatedPosition)
+    public async Task<IActionResult> UpdatePosition(int code, PositionDto updatedPositionDto)
     {
-        if (code != updatedPosition.Code)
+        if (code != updatedPositionDto.Code)
         {
             return BadRequest("Position code mismatch.");
         }
 
-        var position = (await repository.GetAsList(p => p.Code == code)).FirstOrDefault();
-        if (position is null)
+        var existingPosition = await positionService.GetByKey(code);
+        if (existingPosition == null)
         {
             return NotFound();
         }
 
-        await repository.Update(updatedPosition);
+        await positionService.Update(code, updatedPositionDto);
         return NoContent();
     }
 
+    /// <summary>
+    /// Delete
+    /// </summary>
+    /// <param name="code">Key</param>
     [HttpDelete("{code:int}")]
     public async Task<IActionResult> DeletePosition(int code)
     {
-        var position = (await repository.GetAsList(p => p.Code == code)).FirstOrDefault();
-        if (position is null)
+        var position = await positionService.GetByKey(code);
+        if (position == null)
         {
             return NotFound();
         }
 
-        await repository.Delete(code);
+        await positionService.Delete(code);
         return NoContent();
     }
 }

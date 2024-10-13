@@ -6,36 +6,47 @@ namespace Pharmacies.Repositories.Mocks;
 
 public class PharmacyRepositoryMock : IRepository<Pharmacy, int>
 {
-    private readonly ConcurrentDictionary<int, Pharmacy> _pharmacies = new();
+    private static readonly ConcurrentDictionary<int, Pharmacy> Pharmacies = new();
 
     public Task<List<Pharmacy>> GetAsList()
     {
-        return Task.FromResult(_pharmacies.Values.ToList());
+        return Task.FromResult(Pharmacies.Values.ToList());
     }
 
-    public Task<List<Pharmacy>> GetAsList(Func<Pharmacy, bool> predicate)
+    public Task<Pharmacy?> GetByKey(int key)
     {
-        return Task.FromResult(_pharmacies.Values.Where(predicate).ToList());
+        Pharmacies.TryGetValue(key, out var pharmacy);
+        return Task.FromResult(pharmacy);
     }
 
     public Task Add(Pharmacy newRecord)
     {
-        _pharmacies.TryAdd(newRecord.Number, newRecord);
+        var added = Pharmacies.TryAdd(newRecord.Number, newRecord);
+        if (!added)
+        {
+            throw new InvalidOperationException($"A pharmacy with number {newRecord.Number} already exists.");
+        }
         return Task.CompletedTask;
     }
 
     public Task Delete(int key)
     {
-        _pharmacies.TryRemove(key, out _);
+        var removed = Pharmacies.TryRemove(key, out _);
+        if (!removed)
+        {
+            throw new KeyNotFoundException($"No pharmacy found with number {key}.");
+        }
         return Task.CompletedTask;
     }
 
-    public Task Update(Pharmacy newValue)
+    public Task Update(int key, Pharmacy newValue)
     {
-        if (_pharmacies.ContainsKey(newValue.Number))
+        if (!Pharmacies.ContainsKey(key))
         {
-            _pharmacies[newValue.Number] = newValue;
+            throw new KeyNotFoundException($"No pharmacy found with number {key}.");
         }
+
+        Pharmacies[key] = newValue;
         return Task.CompletedTask;
     }
 }

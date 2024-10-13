@@ -1,5 +1,9 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
+using Pharmacies.Application;
+using Pharmacies.Application.Dto;
+using Pharmacies.Application.Interfaces;
+using Pharmacies.Application.Services;
 using Pharmacies.Interfaces;
 using Pharmacies.Model;
 using Pharmacies.Model.Reference;
@@ -9,16 +13,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register the repository as a singleton or scoped service
-builder.Services.AddSingleton<IRepository<Pharmacy, int>, PharmacyRepositoryMock>();
-builder.Services.AddSingleton<IRepository<Position, int>, PositionRepositoryMock>();
-builder.Services.AddSingleton<IRepository<Price, int>, PriceRepositoryMock>();
-builder.Services.AddSingleton<IRepository<PharmaceuticalGroup, int>, PharmaceuticalGroupRepositoryMock>();
-builder.Services.AddSingleton<IRepository<ProductGroup, int>, ProductGroupRepositoryMock>();
+// Mapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+// Repositories
+builder.Services.AddTransient<IRepository<Pharmacy, int>, PharmacyRepositoryMock>();
+builder.Services.AddTransient<IRepository<Position, int>, PositionRepositoryMock>();
+builder.Services.AddTransient<IRepository<Price, int>, PriceRepositoryMock>();
+builder.Services.AddTransient<IRepository<PharmaceuticalGroup, int>, PharmaceuticalGroupRepositoryMock>();
+builder.Services.AddTransient<IRepository<ProductGroup, int>, ProductGroupRepositoryMock>();
+
+// Services
+builder.Services.AddTransient<IEntityService<PharmacyDto, int>, PharmacyService>();
 
 builder.Services.AddSwaggerGen(c =>
 {

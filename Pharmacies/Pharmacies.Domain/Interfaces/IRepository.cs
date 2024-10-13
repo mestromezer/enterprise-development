@@ -3,8 +3,8 @@
 public interface IRepository<TEntity, TKey>
 {
     Task<List<TEntity>> GetAsList();
-    Task<List<TEntity>> GetAsList(Func<TEntity, bool> predicate);
+    Task<TEntity?> GetByKey(TKey key);
     Task Add(TEntity newRecord);
     Task Delete(TKey key);
-    Task Update(TEntity newValue);
+    Task Update(TKey key,TEntity newValue);
 }

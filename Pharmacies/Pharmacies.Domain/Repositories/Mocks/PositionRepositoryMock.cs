@@ -13,29 +13,40 @@ public class PositionRepositoryMock : IRepository<Position, int>
         return Task.FromResult(_positions.Values.ToList());
     }
 
-    public Task<List<Position>> GetAsList(Func<Position, bool> predicate)
+    public Task<Position?> GetByKey(int key)
     {
-        return Task.FromResult(_positions.Values.Where(predicate).ToList());
+        _positions.TryGetValue(key, out var position);
+        return Task.FromResult(position);
     }
 
     public Task Add(Position newRecord)
     {
-        _positions.TryAdd(newRecord.Code, newRecord);
+        var added = _positions.TryAdd(newRecord.Code, newRecord);
+        if (!added)
+        {
+            throw new InvalidOperationException($"A position with code {newRecord.Code} already exists.");
+        }
         return Task.CompletedTask;
     }
 
     public Task Delete(int key)
     {
-        _positions.TryRemove(key, out _);
+        var removed = _positions.TryRemove(key, out _);
+        if (!removed)
+        {
+            throw new KeyNotFoundException($"No position found with code {key}.");
+        }
         return Task.CompletedTask;
     }
 
-    public Task Update(Position newValue)
+    public Task Update(int key, Position newValue)
     {
-        if (_positions.ContainsKey(newValue.Code))
+        if (!_positions.ContainsKey(key))
         {
-            _positions[newValue.Code] = newValue;
+            throw new KeyNotFoundException($"No position found with code {key}.");
         }
+
+        _positions[key] = newValue;
         return Task.CompletedTask;
     }
 }
