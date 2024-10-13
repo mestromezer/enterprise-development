@@ -25,9 +25,11 @@ builder.Services.AddTransient<IRepository<Position, int>, PositionRepositoryMock
 builder.Services.AddTransient<IRepository<Price, int>, PriceRepositoryMock>();
 builder.Services.AddTransient<IRepository<PharmaceuticalGroup, int>, PharmaceuticalGroupRepositoryMock>();
 builder.Services.AddTransient<IRepository<ProductGroup, int>, ProductGroupRepositoryMock>();
+builder.Services.AddTransient<IReferenceRepository<PharmaceuticalGroupReference, int, int>>();
 
 // Services
 builder.Services.AddTransient<IEntityService<PharmacyDto, int>, PharmacyService>();
+builder.Services.AddTransient<IEntityService<PharmaceuticalGroupDto, int>, PharmaceuticalGroupService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
