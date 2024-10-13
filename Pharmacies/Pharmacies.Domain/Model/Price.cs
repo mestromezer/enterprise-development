@@ -7,6 +7,6 @@ public class Price
     public DateTime? ProductionTime { get; set; }
     public bool? IfCash { get; set; }
     public string? SellerOrganizationName { get; set; }
-    public decimal Cost { get; set; }
-    public DateTime? SellTime { get; set; }
+    public required decimal Cost { get; set; }
+    public required DateTime SellTime { get; set; }
 }

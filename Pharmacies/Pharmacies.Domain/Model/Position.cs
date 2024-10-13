@@ -10,5 +10,5 @@ public class Position
     public virtual List<PharmaceuticalGroup?> PharmaceuticalGroups { get; set; } = [];
     public int? Quantity { get; set; }
     public virtual Pharmacy? Pharmacy { get; set; }
-    public Price? Price { get; set; }
+    public virtual Price? Price { get; set; }
 }
