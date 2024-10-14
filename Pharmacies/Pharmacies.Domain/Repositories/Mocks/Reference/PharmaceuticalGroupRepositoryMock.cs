@@ -2,17 +2,14 @@
 using Pharmacies.Interfaces;
 using Pharmacies.Model.Reference;
 
-namespace Pharmacies.Repositories.Mocks;
+namespace Pharmacies.Repositories.Mocks.Reference;
 
 public class PharmaceuticalGroupRepositoryMock : IRepository<PharmaceuticalGroup, int>
 {
     private static readonly ConcurrentDictionary<int, PharmaceuticalGroup> PharmaceuticalGroups = new();
     private static int _currentId = 1;
 
-    public Task<List<PharmaceuticalGroup>> GetAsList()
-    {
-        return Task.FromResult(PharmaceuticalGroups.Values.ToList());
-    }
+    public Task<List<PharmaceuticalGroup>> GetAsList() => Task.FromResult(PharmaceuticalGroups.Values.ToList());
 
     public Task<PharmaceuticalGroup?> GetByKey(int key)
     {

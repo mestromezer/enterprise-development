@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Pharmacies.Application.Dto;
 using Pharmacies.Interfaces;
 using Pharmacies.Model;
 
@@ -36,11 +37,11 @@ public class AnalyticsController(
     /// </summary>
     /// <param name="drugName">Drug name</param>
     [HttpGet("drug/{drugName}/pharmacies")]
-    public async Task<ActionResult<IEnumerable<object>>> GetPharmaciesWithDrugQuantity(string drugName)
+    public async Task<ActionResult<IEnumerable<PharmacyAndNumericStatisticsDto>>> GetPharmaciesWithDrugQuantity(string drugName)
     {
         var pharmaciesWithDrug = (await positionsRepository.GetAsList())
             .Where(p => p.Name == drugName)
-            .Select(p => new { p.Pharmacy?.Name, p.Quantity })
+            .Select(p => new PharmacyAndNumericStatisticsDto( p.Pharmacy?.Name, p.Quantity, true ))
             .ToList();
 
         if (pharmaciesWithDrug.Count == 0)
@@ -53,19 +54,19 @@ public class AnalyticsController(
     /// Вывести информацию о средней стоимости препаратов каждой фармацевтической группе для каждой аптеки.
     /// </summary>
     [HttpGet("average-cost")]
-    public async Task<ActionResult<IEnumerable<object>>> GetAverageCostPerGroupPerPharmacy()
+    public async Task<ActionResult<IEnumerable<GetAverageCostPerGroupPerPharmacyDto>>> GetAverageCostPerGroupPerPharmacy()
     {
         var averageCosts =
             (from position in (await positionsRepository.GetAsList())
                 from pharmaceuticalGroup in position.PharmaceuticalGroups
                 group position by new { Pharmacy = position.Pharmacy?.Name, Group = pharmaceuticalGroup.Name }
                 into grouped
-                select new
-                {
+                select new GetAverageCostPerGroupPerPharmacyDto
+                (
                     grouped.Key.Pharmacy,
                     grouped.Key.Group,
-                    AverageCost = grouped.Average(p => p.Price?.Cost)
-                }).ToList();
+                    grouped.Average(p => p.Price?.Cost)
+                )).ToList();
 
         if (averageCosts.Count == 0)
             return NotFound("No records found.");
@@ -87,7 +88,7 @@ public class AnalyticsController(
             .Where(p => p.Name == drugName && p.Price?.SellTime >= startDate && p.Price.SellTime <= endDate)
             .OrderByDescending(p => p.Quantity * p.Price?.Cost)
             .Take(5)
-            .Select(p => new { p.Pharmacy?.Name, TotalVolume = p.Quantity * p.Price?.Cost })
+            .Select(p => new PharmacyAndNumericStatisticsDto( p.Pharmacy?.Name, p.Quantity * p.Price?.Cost, false ))
             .ToList();
 
         if (topPharmacies.Count == 0)
@@ -103,7 +104,7 @@ public class AnalyticsController(
     /// <param name="district">District</param>
     /// <param name="minVolume">Minimum volume</param>
     [HttpGet("drug/{drugName}/district/{district}/min-volume/{minVolume}")]
-    public async Task<ActionResult<IEnumerable<object>>> GetPharmaciesByVolume(string drugName, string district, int minVolume)
+    public async Task<ActionResult<IEnumerable<string>>> GetPharmaciesByVolume(string drugName, string district, int minVolume)
     {
         var pharmacies = (await positionsRepository.GetAsList())
             .Where(p =>
@@ -115,7 +116,7 @@ public class AnalyticsController(
             .Distinct()
             .ToList();
 
-        if (!pharmacies.Any())
+        if (pharmacies.Count == 0)
             return NotFound("No pharmacies found.");
 
         return Ok(pharmacies);
@@ -126,7 +127,7 @@ public class AnalyticsController(
     /// </summary>
     /// <param name="drugName">Drug name</param>
     [HttpGet("drug/{drugName}/min-price")]
-    public async Task<ActionResult<IEnumerable<object>>> GetPharmaciesWithMinPrice(string drugName)
+    public async Task<ActionResult<IEnumerable<string>>> GetPharmaciesWithMinPrice(string drugName)
     {
         var positions = (await positionsRepository.GetAsList());
         
@@ -140,7 +141,7 @@ public class AnalyticsController(
             .Distinct()
             .ToList();
 
-        if (!pharmaciesWithMinPrice.Any())
+        if (pharmaciesWithMinPrice.Count == 0)
             return NotFound("No pharmacies found.");
 
         return Ok(pharmaciesWithMinPrice);

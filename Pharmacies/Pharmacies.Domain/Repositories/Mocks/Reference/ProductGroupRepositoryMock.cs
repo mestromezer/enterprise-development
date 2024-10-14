@@ -2,7 +2,7 @@
 using Pharmacies.Interfaces;
 using Pharmacies.Model.Reference;
 
-namespace Pharmacies.Repositories.Mocks;
+namespace Pharmacies.Repositories.Mocks.Reference;
 
 public class ProductGroupRepositoryMock : IRepository<ProductGroup, int>
 {
