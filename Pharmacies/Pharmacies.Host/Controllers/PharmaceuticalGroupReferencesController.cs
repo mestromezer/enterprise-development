@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Pharmacies.Application.Dto;
 using Pharmacies.Application.Interfaces;

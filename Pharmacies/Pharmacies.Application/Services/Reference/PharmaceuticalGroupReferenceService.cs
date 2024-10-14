@@ -10,10 +10,9 @@ namespace Pharmacies.Application.Services.Reference;
 /// <summary>
 /// Сервис на будущее, так как в базе я буду хранить допустимые фарм. группы.
 /// Ими можно будет рулить, на них ссылаться.
-/// Связь многие ко многим => нужна таблица где вся эта рабость будет храниться. 
+/// Связь многие ко многим => нужна таблица где вся эта рабость будет храниться.
+/// Через этот сервис будет происходить связка 
 /// </summary>
-/// <param name="repository"></param>
-/// <param name="mapper"></param>
 public class PharmaceuticalGroupReferenceService(
     IRepository<PharmaceuticalGroupReference, int> repository,
     IMapper mapper)

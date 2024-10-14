@@ -2,6 +2,10 @@ using Pharmacies.Model.Reference;
 
 namespace Pharmacies.Model;
 
+/// <summary>
+/// Полe PharmaceuticalGroups планирую собирать через fluent api конфиг EF
+/// По этому сервис PharmaceuticalGroupReferenceService пока что бесполезен
+/// </summary>
 public class Position
 {
     public required int Code { get; set; }

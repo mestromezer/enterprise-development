@@ -1,8 +1,6 @@
-﻿using Pharmacies.Model.Reference;
+﻿namespace Pharmacies.Interfaces;
 
-namespace Pharmacies.Interfaces;
-
-public interface IRepository<TEntity, TKey>
+public interface IRepository<TEntity, in TKey>
 {
     Task<List<TEntity>> GetAsList();
     Task<TEntity?> GetByKey(TKey key);
