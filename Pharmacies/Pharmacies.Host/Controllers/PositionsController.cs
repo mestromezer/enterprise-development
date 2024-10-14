@@ -56,11 +56,6 @@ public class PositionsController(IEntityService<PositionDto, int> positionServic
     [HttpPut("{code:int}")]
     public async Task<IActionResult> UpdatePosition(int code, PositionDto updatedPositionDto)
     {
-        if (code != updatedPositionDto.Code)
-        {
-            return BadRequest("Position code mismatch.");
-        }
-
         var existingPosition = await positionService.GetByKey(code);
         if (existingPosition == null)
         {

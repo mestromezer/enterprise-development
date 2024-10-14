@@ -6,28 +6,25 @@ namespace Pharmacies.Repositories.Mocks;
 
 public class PharmaceuticalGroupRepositoryMock : IRepository<PharmaceuticalGroup, int>
 {
-    private readonly ConcurrentDictionary<int, PharmaceuticalGroup> _pharmaceuticalGroups = new();
-    private int _currentId = 0;
+    private static readonly ConcurrentDictionary<int, PharmaceuticalGroup> PharmaceuticalGroups = new();
+    private static int _currentId = 1;
 
     public Task<List<PharmaceuticalGroup>> GetAsList()
     {
-        return Task.FromResult(_pharmaceuticalGroups.Values.ToList());
+        return Task.FromResult(PharmaceuticalGroups.Values.ToList());
     }
 
     public Task<PharmaceuticalGroup?> GetByKey(int key)
     {
-        _pharmaceuticalGroups.TryGetValue(key, out var pharmaceuticalGroup);
+        PharmaceuticalGroups.TryGetValue(key, out var pharmaceuticalGroup);
         return Task.FromResult(pharmaceuticalGroup);
     }
 
     public Task Add(PharmaceuticalGroup newRecord)
     {
-        if (newRecord.Id == -1)
-        {
-            newRecord.Id = ++_currentId;
-        }
-            
-        var added = _pharmaceuticalGroups.TryAdd(newRecord.Id, newRecord);
+        newRecord.Id = _currentId++;
+
+        var added = PharmaceuticalGroups.TryAdd(newRecord.Id, newRecord);
         if (!added)
         {
             throw new InvalidOperationException($"A pharmaceutical group with ID {newRecord.Id} already exists.");
@@ -38,7 +35,7 @@ public class PharmaceuticalGroupRepositoryMock : IRepository<PharmaceuticalGroup
 
     public Task Delete(int key)
     {
-        var removed = _pharmaceuticalGroups.TryRemove(key, out _);
+        var removed = PharmaceuticalGroups.TryRemove(key, out _);
         if (!removed)
         {
             throw new KeyNotFoundException($"No pharmaceutical group found with ID {key}.");
@@ -49,12 +46,13 @@ public class PharmaceuticalGroupRepositoryMock : IRepository<PharmaceuticalGroup
 
     public Task Update(int key, PharmaceuticalGroup newValue)
     {
-        if (!_pharmaceuticalGroups.ContainsKey(key))
+        if (!PharmaceuticalGroups.ContainsKey(key))
         {
             throw new KeyNotFoundException($"No pharmaceutical group found with ID {key}.");
         }
 
-        _pharmaceuticalGroups[key] = newValue;
+        newValue.Id = key;
+        PharmaceuticalGroups[key] = newValue;
         return Task.CompletedTask;
     }
 }

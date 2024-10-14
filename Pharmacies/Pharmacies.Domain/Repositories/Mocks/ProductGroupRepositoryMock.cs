@@ -6,28 +6,25 @@ namespace Pharmacies.Repositories.Mocks;
 
 public class ProductGroupRepositoryMock : IRepository<ProductGroup, int>
 {
-    private readonly ConcurrentDictionary<int, ProductGroup> _productGroups = new();
-    private int _currentId = 0;
+    private static readonly ConcurrentDictionary<int, ProductGroup> ProductGroups = new();
+    private static int _currentId = 1;
 
     public Task<List<ProductGroup>> GetAsList()
     {
-        return Task.FromResult(_productGroups.Values.ToList());
+        return Task.FromResult(ProductGroups.Values.ToList());
     }
 
     public Task<ProductGroup?> GetByKey(int key)
     {
-        _productGroups.TryGetValue(key, out var productGroup);
+        ProductGroups.TryGetValue(key, out var productGroup);
         return Task.FromResult(productGroup);
     }
 
     public Task Add(ProductGroup newRecord)
     {
-        if (newRecord.Id == -1)
-        {
-            newRecord.Id = ++_currentId;
-        }
-        
-        var added = _productGroups.TryAdd(newRecord.Id, newRecord);
+        newRecord.Id = _currentId++;
+
+        var added = ProductGroups.TryAdd(newRecord.Id, newRecord);
         if (!added)
         {
             throw new InvalidOperationException($"A product group with ID {newRecord.Id} already exists.");
@@ -38,7 +35,7 @@ public class ProductGroupRepositoryMock : IRepository<ProductGroup, int>
 
     public Task Delete(int key)
     {
-        var removed = _productGroups.TryRemove(key, out _);
+        var removed = ProductGroups.TryRemove(key, out _);
         if (!removed)
         {
             throw new KeyNotFoundException($"No product group found with ID {key}.");
@@ -49,12 +46,13 @@ public class ProductGroupRepositoryMock : IRepository<ProductGroup, int>
 
     public Task Update(int key, ProductGroup newValue)
     {
-        if (!_productGroups.ContainsKey(key))
+        if (!ProductGroups.ContainsKey(key))
         {
             throw new KeyNotFoundException($"No product group found with ID {key}.");
         }
 
-        _productGroups[key] = newValue;
+        newValue.Id = key;
+        ProductGroups[key] = newValue;
         return Task.CompletedTask;
     }
 }

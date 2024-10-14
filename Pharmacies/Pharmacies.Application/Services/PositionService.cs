@@ -80,7 +80,7 @@ public class PositionService(
 
         if (entityDto.PharmaceuticalGroupIds.Count != 0)
         {
-            position.PharmaceuticalGroups = (await Task.WhenAll(entityDto.PharmaceuticalGroupIds.Select(id => pharmaceuticalGroupRepository.GetByKey(id))))
+            position.PharmaceuticalGroups = (await Task.WhenAll(entityDto.PharmaceuticalGroupIds.Select(pharmaceuticalGroupRepository.GetByKey)))
                 .Where(pg => pg != null).ToList();
         }
 

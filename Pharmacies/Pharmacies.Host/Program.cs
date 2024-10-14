@@ -4,6 +4,7 @@ using Pharmacies.Application;
 using Pharmacies.Application.Dto;
 using Pharmacies.Application.Interfaces;
 using Pharmacies.Application.Services;
+using Pharmacies.Application.Services.Reference;
 using Pharmacies.Interfaces;
 using Pharmacies.Model;
 using Pharmacies.Model.Reference;
@@ -25,11 +26,15 @@ builder.Services.AddTransient<IRepository<Position, int>, PositionRepositoryMock
 builder.Services.AddTransient<IRepository<Price, int>, PriceRepositoryMock>();
 builder.Services.AddTransient<IRepository<PharmaceuticalGroup, int>, PharmaceuticalGroupRepositoryMock>();
 builder.Services.AddTransient<IRepository<ProductGroup, int>, ProductGroupRepositoryMock>();
-builder.Services.AddTransient<IReferenceRepository<PharmaceuticalGroupReference, int, int>>();
+builder.Services.AddTransient<IRepository<PharmaceuticalGroupReference, int>, PharmaceuticalGroupReferenceRepository>();
 
 // Services
-builder.Services.AddTransient<IEntityService<PharmacyDto, int>, PharmacyService>();
+builder.Services.AddTransient<IEntityService<PharmaceuticalGroupReferenceDto, int>, PharmaceuticalGroupReferenceService>();
 builder.Services.AddTransient<IEntityService<PharmaceuticalGroupDto, int>, PharmaceuticalGroupService>();
+builder.Services.AddTransient<IEntityService<PharmacyDto, int>, PharmacyService>();
+builder.Services.AddTransient<IEntityService<PositionDto, int>, PositionService>();
+builder.Services.AddTransient<IEntityService<PriceDto, int>, PriceService>();
+builder.Services.AddTransient<IEntityService<ProductGroupDto, int>, ProductGroupService>();
 
 builder.Services.AddSwaggerGen(c =>
 {

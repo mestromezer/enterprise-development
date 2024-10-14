@@ -4,7 +4,7 @@ using Pharmacies.Application.Interfaces;
 using Pharmacies.Interfaces;
 using Pharmacies.Model.Reference;
 
-namespace Pharmacies.Application.Services;
+namespace Pharmacies.Application.Services.Reference;
 
 public class ProductGroupService(IRepository<ProductGroup, int> repository, IMapper mapper)
     : IEntityService<ProductGroupDto, int>

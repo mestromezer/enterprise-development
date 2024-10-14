@@ -1,4 +1,6 @@
-﻿namespace Pharmacies.Interfaces;
+﻿using Pharmacies.Model.Reference;
+
+namespace Pharmacies.Interfaces;
 
 public interface IRepository<TEntity, TKey>
 {

@@ -56,11 +56,6 @@ public class PricesController(IEntityService<PriceDto, int> priceService) : Cont
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdatePrice(int id, PriceDto priceDto)
     {
-        if (id != priceDto.Id)
-        {
-            return BadRequest("Price ID mismatch.");
-        }
-
         var existingPrice = await priceService.GetByKey(id);
         if (existingPrice == null)
         {

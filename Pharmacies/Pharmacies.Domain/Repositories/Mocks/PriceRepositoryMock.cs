@@ -6,55 +6,53 @@ namespace Pharmacies.Repositories.Mocks;
 
 public class PriceRepositoryMock : IRepository<Price, int>
 {
-    private readonly ConcurrentDictionary<int, Price> _prices = new();
-    private int _currentId = 0;
+    private static readonly ConcurrentDictionary<int, Price> Prices = new();
+    private static int _currentId = 1;
 
     public Task<List<Price>> GetAsList()
     {
-        return Task.FromResult(_prices.Values.ToList());
+        return Task.FromResult(Prices.Values.ToList());
     }
 
     public Task<Price?> GetByKey(int key)
     {
-        _prices.TryGetValue(key, out var price);
+        Prices.TryGetValue(key, out var price);
         return Task.FromResult(price);
     }
 
     public Task Add(Price newRecord)
     {
-        if (newRecord.Id == -1)
-        {
-            newRecord.Id = ++_currentId;
-        }
-        
-        var added = _prices.TryAdd(newRecord.Id, newRecord);
+        newRecord.Id = _currentId ++;
+
+        var added = Prices.TryAdd(newRecord.Id, newRecord);
         if (!added)
         {
             throw new InvalidOperationException($"A price with ID {newRecord.Id} already exists.");
         }
-        
+
         return Task.CompletedTask;
     }
 
     public Task Delete(int key)
     {
-        var removed = _prices.TryRemove(key, out _);
+        var removed = Prices.TryRemove(key, out _);
         if (!removed)
         {
             throw new KeyNotFoundException($"No price found with ID {key}.");
         }
-        
+
         return Task.CompletedTask;
     }
 
     public Task Update(int key, Price newValue)
     {
-        if (!_prices.ContainsKey(key))
+        if (!Prices.ContainsKey(key))
         {
             throw new KeyNotFoundException($"No price found with ID {key}.");
         }
 
-        _prices[key] = newValue;
+        newValue.Id = key;
+        Prices[key] = newValue;
         return Task.CompletedTask;
     }
 }

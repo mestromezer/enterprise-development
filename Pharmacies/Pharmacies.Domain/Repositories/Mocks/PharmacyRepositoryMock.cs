@@ -46,6 +46,7 @@ public class PharmacyRepositoryMock : IRepository<Pharmacy, int>
             throw new KeyNotFoundException($"No pharmacy found with number {key}.");
         }
 
+        newValue.Number = key;
         Pharmacies[key] = newValue;
         return Task.CompletedTask;
     }
