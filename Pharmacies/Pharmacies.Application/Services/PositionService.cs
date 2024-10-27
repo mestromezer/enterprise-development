@@ -44,12 +44,6 @@ public class PositionService(
             position.ProductGroup = await productGroupRepository.GetByKey(entityDto.ProductGroupId.Value);
         }
 
-        if (entityDto.PharmaceuticalGroupIds.Count != 0)
-        {
-            position.PharmaceuticalGroups = (await Task.WhenAll(entityDto.PharmaceuticalGroupIds.Select(pharmaceuticalGroupRepository.GetByKey)))
-                .Where(pg => pg != null).ToList();
-        }
-
         if (entityDto.PharmacyId.HasValue)
         {
             position.Pharmacy = await pharmacyRepository.GetByKey(entityDto.PharmacyId.Value);
@@ -76,12 +70,6 @@ public class PositionService(
         if (entityDto.ProductGroupId.HasValue)
         {
             position.ProductGroup = await productGroupRepository.GetByKey(entityDto.ProductGroupId.Value);
-        }
-
-        if (entityDto.PharmaceuticalGroupIds.Count != 0)
-        {
-            position.PharmaceuticalGroups = (await Task.WhenAll(entityDto.PharmaceuticalGroupIds.Select(pharmaceuticalGroupRepository.GetByKey)))
-                .Where(pg => pg != null).ToList();
         }
 
         if (entityDto.PharmacyId.HasValue)

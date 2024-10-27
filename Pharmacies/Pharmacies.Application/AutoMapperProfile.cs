@@ -1,34 +1,26 @@
 using AutoMapper;
 using Pharmacies.Application.Dto;
 using Pharmacies.Model;
-using Pharmacies.Model.Reference;
 
-namespace Pharmacies.Application;
-
-public class AutoMapperProfile: Profile
+namespace Pharmacies.Application
 {
-    public AutoMapperProfile()
+    public class AutoMapperProfile : Profile
     {
-        CreateMap<Pharmacy, PharmacyDto>().ReverseMap();
-        ConfigurePositionMapping();
-        CreateMap<Price, PriceDto>().ReverseMap();
-        CreateMap<ProductGroup, ProductGroupDto>().ReverseMap();
-        CreateMap<PharmaceuticalGroupDto, PharmaceuticalGroup>().ReverseMap();
-        CreateMap<PharmaceuticalGroupReferenceDto, PharmaceuticalGroupReference>().ReverseMap();
-    }
+        public AutoMapperProfile()
+        {
+            CreateMap<Position, PositionDto>().ReverseMap();
+            CreateMap<Price, PriceDto>().ReverseMap();
+            ConfigurePositionMapping();
+        }
 
-    private void ConfigurePositionMapping()
-    {
-        CreateMap<Position, PositionDto>()
-            .ForMember(dest => dest.ProductGroupId, opt => opt.MapFrom(src => src.ProductGroup != null ? src.ProductGroup.Id : (int?)null))
-            .ForMember(dest => dest.PharmaceuticalGroupIds, opt => opt.MapFrom(src => src.PharmaceuticalGroups.Select(pg => pg.Id).ToList()))
-            .ForMember(dest => dest.PharmacyId, opt => opt.MapFrom(src => src.Pharmacy != null ? src.Pharmacy.Number : (int?)null))
-            .ForMember(dest => dest.PriceId, opt => opt.MapFrom(src => src.Price != null ? src.Price.Id : (int?)null));
+        private void ConfigurePositionMapping()
+        {
+            CreateMap<Position, PositionDto>();
 
-        CreateMap<PositionDto, Position>()
-            .ForMember(dest => dest.ProductGroup, opt => opt.Ignore())  // Зависимые сущности загружаются отдельно
-            .ForMember(dest => dest.PharmaceuticalGroups, opt => opt.Ignore())  // Нужно загрузить их вручную
-            .ForMember(dest => dest.Pharmacy, opt => opt.Ignore())
-            .ForMember(dest => dest.Price, opt => opt.Ignore());
+            CreateMap<PositionDto, Position>()
+                .ForMember(dest => dest.ProductGroup, opt => opt.Ignore())
+                .ForMember(dest => dest.Pharmacy, opt => opt.Ignore())
+                .ForMember(dest => dest.Price, opt => opt.Ignore());
+        }
     }
 }
