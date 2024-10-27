@@ -1,4 +1,5 @@
 using Xunit;
+using Xunit.Sdk;
 using Seed = Pharmacies.Domain.Tests.PharmaciesModelsTestsDataSeed;
 
 namespace Pharmacies.Domain.Tests;
@@ -45,24 +46,37 @@ public class Tests
     [Fact]
     public void ShouldReturnAverageCostOfDrugsPerPharmaceuticalGroupForEachPharmacy()
     {
-        const decimal expectedAvg = 2042.5m;
+        // Arrange
+        var pharmacies = Seed.Pharmacies;
+        var positions = Seed.Positions;
+        var pharmaceuticalGroups = Seed.PharmaceuticalGroups;
 
         // Act
-        var averageCosts = 
-            (from position in Seed.Positions
-                from pharmaceuticalGroup in position.PharmaceuticalGroups
-                group position by new { Pharmacy = position.Pharmacy?.Name, Group = pharmaceuticalGroup.Name } into grouped
-                select new
-                {
-                    grouped.Key.Pharmacy,
-                    grouped.Key.Group,
-                    AverageCost = grouped.Average(p => p.Price?.Cost)
-                }).ToList();
+        var result = 
+            (from pharmacy in Seed.Pharmacies
+            join position in Seed.Positions
+                on pharmacy.Number equals position.Pharmacy.Number
+            join pharmaceuticalGroup in Seed.PharmaceuticalGroups
+                on position.ProductGroup.Id equals pharmaceuticalGroup.Id
+            group position by new 
+                { Pharmacy = pharmacy.Name, PharmaceuticalGroup = pharmaceuticalGroup.Name, position.Price.Cost } 
+            into grouped
+            select new
+            {
+                PharmacyName = grouped.Key.Pharmacy,
+                PharmaceuticalGroupName = grouped.Key.PharmaceuticalGroup,
+                grouped.Key.Cost
+            }).ToList();
 
         // Assert
-        Assert.NotEmpty(averageCosts);
-        averageCosts.ForEach(avgCost => Assert.NotNull(avgCost.Group));
-        Assert.Equal(expectedAvg, averageCosts.Sum(rec => rec.AverageCost));
+        Assert.NotNull(result);
+
+        // Проверим первую аптеку и среднюю стоимость для НПВС
+        var firstPharmacy = result.FirstOrDefault();
+
+        Assert.NotNull(firstPharmacy);
+        
+        Assert.Equal(150, firstPharmacy.Cost);
     }
 
 

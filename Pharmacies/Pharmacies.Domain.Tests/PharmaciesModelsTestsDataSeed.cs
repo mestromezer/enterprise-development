@@ -104,7 +104,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 101,
             Name = "Аспирин",
             ProductGroup = ProductGroups[0], // Обезболивающие
-            PharmaceuticalGroups = [PharmaceuticalGroups[0]], // НПВС
             Quantity = 50,
             Pharmacy = Pharmacies[0], // Аптека №1
             Price = Prices[0] // Цена от Bayer
@@ -115,7 +114,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 102,
             Name = "Парацетамол",
             ProductGroup = ProductGroups[1], // Жаропонижающие
-            PharmaceuticalGroups = [PharmaceuticalGroups[0]], // НПВС
             Quantity = 100,
             Pharmacy = Pharmacies[1], // Аптека №2
             Price = Prices[1] // Цена от Pharma Inc.
@@ -126,7 +124,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 103,
             Name = "Амоксициллин",
             ProductGroup = ProductGroups[2], // Антибиотики
-            PharmaceuticalGroups = [PharmaceuticalGroups[1]], // Антибактериальные
             Quantity = 30,
             Pharmacy = Pharmacies[2], // Аптека №3
             Price = Prices[2] // Цена от Novartis
@@ -137,7 +134,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 104,
             Name = "Ибупрофен",
             ProductGroup = ProductGroups[0], // Обезболивающие
-            PharmaceuticalGroups = [PharmaceuticalGroups[0]], // НПВС
             Quantity = 60,
             Pharmacy = Pharmacies[3], // Аптека №4
             Price = Prices[3] // Цена от Pfizer
@@ -148,7 +144,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 105,
             Name = "Цетиризин",
             ProductGroup = ProductGroups[3], // Антигистаминные
-            PharmaceuticalGroups = [PharmaceuticalGroups[2]], // Противоаллергические
             Quantity = 40,
             Pharmacy = Pharmacies[4], // Аптека №5
             Price = Prices[4] // Цена от AstraZeneca
@@ -159,7 +154,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 106,
             Name = "Омепразол",
             ProductGroup = ProductGroups[4], // Противоязвенные
-            PharmaceuticalGroups = [PharmaceuticalGroups[3]], // Ингибиторы протонной помпы
             Quantity = 25,
             Pharmacy = Pharmacies[0], // Аптека №1
             Price = Prices[0] // Цена от Bayer
@@ -170,7 +164,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 107,
             Name = "Метформин",
             ProductGroup = ProductGroups[5], // Гипогликемические
-            PharmaceuticalGroups = [PharmaceuticalGroups[4]], // Противодиабетические
             Quantity = 80,
             Pharmacy = Pharmacies[1], // Аптека №2
             Price = Prices[1] // Цена от Pharma Inc.
@@ -181,7 +174,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 108,
             Name = "Лоперамид",
             ProductGroup = ProductGroups[6], // Противодиарейные
-            PharmaceuticalGroups = [PharmaceuticalGroups[5]], // Противодиарейные
             Quantity = 90,
             Pharmacy = Pharmacies[2], // Аптека №3
             Price = Prices[2] // Цена от Novartis
@@ -192,7 +184,6 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 109,
             Name = "Дротаверин",
             ProductGroup = ProductGroups[7], // Спазмолитики
-            PharmaceuticalGroups = [PharmaceuticalGroups[6]], // Спазмолитики
             Quantity = 70,
             Pharmacy = Pharmacies[3], // Аптека №4
             Price = Prices[3] // Цена от Pfizer
@@ -203,10 +194,61 @@ public static class PharmaciesModelsTestsDataSeed
             Code = 110,
             Name = "Аллопуринол",
             ProductGroup = ProductGroups[8], // Противоподагрические
-            PharmaceuticalGroups = [PharmaceuticalGroups[7]], // Противоподагрические
             Quantity = 35,
             Pharmacy = Pharmacies[4], // Аптека №5
             Price = Prices[4] // Цена от AstraZeneca
         }
     ];
+    
+    public static List<PharmaceuticalGroupReference> PharmaceuticalGroupReferences { get; } = new List<PharmaceuticalGroupReference>
+    {
+        new PharmaceuticalGroupReference
+        {
+            Id = 1,
+            PharmaceuticalGroupId = 1, // НПВС
+            PositionId = 101 // Аспирин
+        },
+        new PharmaceuticalGroupReference
+        {
+            Id = 2,
+            PharmaceuticalGroupId = 2, // Антибактериальные
+            PositionId = 103 // Амоксициллин
+        },
+        new PharmaceuticalGroupReference
+        {
+            Id = 3,
+            PharmaceuticalGroupId = 3, // Противоаллергические
+            PositionId = 105 // Цетиризин
+        },
+        new PharmaceuticalGroupReference
+        {
+            Id = 4,
+            PharmaceuticalGroupId = 4, // Ингибиторы протонной помпы
+            PositionId = 106 // Омепразол
+        },
+        new PharmaceuticalGroupReference
+        {
+            Id = 5,
+            PharmaceuticalGroupId = 5, // Противодиабетические
+            PositionId = 107 // Метформин
+        },
+        new PharmaceuticalGroupReference
+        {
+            Id = 6,
+            PharmaceuticalGroupId = 6, // Противодиарейные
+            PositionId = 108 // Лоперамид
+        },
+        new PharmaceuticalGroupReference
+        {
+            Id = 7,
+            PharmaceuticalGroupId = 7, // Спазмолитики
+            PositionId = 109 // Дротаверин
+        },
+        new PharmaceuticalGroupReference
+        {
+            Id = 8,
+            PharmaceuticalGroupId = 8, // Противоподагрические
+            PositionId = 110 // Аллопуринол
+        }
+    };
 }
