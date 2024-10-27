@@ -1,4 +1,4 @@
-namespace Pharmacies.Application.Dto;
+namespace Pharmacies.Application.Dto.Reference;
 
 public class PharmaceuticalGroupDto
 {

@@ -1,57 +1,42 @@
 using AutoMapper;
 using Pharmacies.Application.Dto;
+using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Application.Interfaces;
 using Pharmacies.Interfaces;
+using Pharmacies.Model;
 using Pharmacies.Model.Reference;
 
-namespace Pharmacies.Application.Services.Reference;
-
-
-/// <summary>
-/// Сервис на будущее, так как в базе я буду хранить допустимые фарм. группы.
-/// Ими можно будет рулить, на них ссылаться.
-/// Связь многие ко многим => нужна таблица где вся эта рабость будет храниться.
-/// Через этот сервис будет происходить связка 
-/// </summary>
 public class PharmaceuticalGroupReferenceService(
-    IRepository<PharmaceuticalGroupReference, int> repository,
-    IMapper mapper)
-    : IEntityService<PharmaceuticalGroupReferenceDto, int>
+    IMapper mapper,
+    IReferenceRepository<Position, PharmaceuticalGroup> referenceRepository)
+    : IReferenceService<PositionDto, PharmaceuticalGroupDto>
 {
-    public async Task<List<PharmaceuticalGroupReferenceDto>> GetAll()
+    public async Task<IDictionary<PositionDto, IEnumerable<PharmaceuticalGroupDto>>> GetAllForAll()
     {
-        var entities = await repository.GetAsList();
-        return entities.Select(mapper.Map<PharmaceuticalGroupReferenceDto>).ToList();
+        var allRelations = await referenceRepository.GetAllForAll();
+
+        var result = allRelations.ToDictionary(
+            kvp => mapper.Map<PositionDto>(kvp.Key),
+            kvp => kvp.Value.Select(child => mapper.Map<PharmaceuticalGroupDto>(child))
+        );
+
+        return result;
     }
-    
-    public async Task<List<PharmaceuticalGroupReferenceDto>> GetAll(Func<PharmaceuticalGroupReferenceDto, bool> predicate)
+
+    public async Task<IEnumerable<PharmaceuticalGroupDto>> GetFor(PositionDto parentKey)
     {
-        var entities = await repository.GetAsList();
-        return entities.Select(mapper.Map<PharmaceuticalGroupReferenceDto>)
-                       .Where(predicate)
-                       .ToList();
+        var parentEntity = mapper.Map<Position>(parentKey);
+
+        var relatedEntities = await referenceRepository.GetFor(parentEntity);
+
+        return relatedEntities.Select(child => mapper.Map<PharmaceuticalGroupDto>(child));
     }
-    
-    public async Task<PharmaceuticalGroupReferenceDto?> GetByKey(int key)
+
+    public async Task SetRelation(PositionDto parentKey, List<PharmaceuticalGroupDto> childKeys)
     {
-        var entity = await repository.GetByKey(key);
-        return entity == null ? null : mapper.Map<PharmaceuticalGroupReferenceDto>(entity);
-    }
-    
-    public async Task Add(PharmaceuticalGroupReferenceDto entityDto)
-    {
-        var entity = mapper.Map<PharmaceuticalGroupReference>(entityDto);
-        await repository.Add(entity);
-    }
-    
-    public async Task Update(int key, PharmaceuticalGroupReferenceDto entityDto)
-    {
-        var entity = mapper.Map<PharmaceuticalGroupReference>(entityDto);
-        await repository.Update(key, entity);
-    }
-    
-    public async Task Delete(int key)
-    {
-        await repository.Delete(key);
+        var parentEntity = mapper.Map<Position>(parentKey);
+        var childEntities = childKeys.Select(child => mapper.Map<PharmaceuticalGroup>(child)).ToList();
+
+        await referenceRepository.SetRelation(parentEntity, childEntities);
     }
 }

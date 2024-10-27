@@ -1,5 +1,6 @@
 using AutoMapper;
 using Pharmacies.Application.Dto;
+using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Application.Interfaces;
 using Pharmacies.Interfaces;
 using Pharmacies.Model.Reference;
