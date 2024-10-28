@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pharmacies.Application.Dto;
-using Pharmacies.Interfaces;
-using Pharmacies.Model;
+using Pharmacies.Application.Dto.AnalyticsResults;
+using Pharmacies.Application.Dto.Reference;
+using Pharmacies.Application.Interfaces;
 
 namespace Pharmacies.Controllers;
 
@@ -11,25 +12,26 @@ namespace Pharmacies.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class AnalyticsController(
-    IRepository<Position, int> positionsRepository
-    ) : ControllerBase
+    IEntityService<PositionDto, int> positionsService,
+    IEntityService<PharmacyDto, int> pharmacyService,
+    IEntityService<PriceDto, int> priceService,
+    IEntityService<ProductGroupDto, int> productGroupService) : ControllerBase
 {
     /// <summary>
     ///  Вывести сведения о всех препаратах в заданной аптеке, упорядочить по названию.
     /// </summary>
     /// <param name="pharmacyNumber">Pharmacy number</param>
-    [HttpGet("pharmacy/{pharmacyNumber}/positions")]
-    public async Task<ActionResult<IEnumerable<Position>>> GetPositionsByPharmacy(int pharmacyNumber)
+    [HttpGet("pharmacy/{pharmacyNumber:int}/positions")]
+    public async Task<ActionResult<IEnumerable<PositionDto>>> GetPositionsByPharmacy(int pharmacyNumber)
     {
-        var positions = (await positionsRepository.GetAsList())
-            .Where(p => p.Pharmacy?.Number == pharmacyNumber)
-            .OrderBy(p => p.Name)
-            .ToList();
+        var positions = await positionsService.GetAll(p => p.PharmacyId == pharmacyNumber);
+    
+        var orderedPositions = positions.OrderBy(p => p.Name).ToList();
 
-        if (positions.Count == 0)
+        if (orderedPositions.Count == 0)
             return NotFound("No drugs found.");
 
-        return Ok(positions);
+        return Ok(orderedPositions);
     }
 
     /// <summary>
@@ -39,9 +41,14 @@ public class AnalyticsController(
     [HttpGet("drug/{drugName}/pharmacies")]
     public async Task<ActionResult<IEnumerable<PharmacyAndNumericStatisticsDto>>> GetPharmaciesWithDrugQuantity(string drugName)
     {
-        var pharmaciesWithDrug = (await positionsRepository.GetAsList())
-            .Where(p => p.Name == drugName)
-            .Select(p => new PharmacyAndNumericStatisticsDto( p.Pharmacy?.Name, p.Quantity, true ))
+        var positionsWithDrug = await positionsService.GetAll(p => p.Name == drugName);
+        var pharmaciesWithDrug = positionsWithDrug
+            .Where(p => p.PharmacyId != null)
+            .Select(p => new PharmacyAndNumericStatisticsDto(
+                p.PharmacyId.ToString(),
+                p.Quantity,
+                true
+            ))
             .ToList();
 
         if (pharmaciesWithDrug.Count == 0)
@@ -49,31 +56,45 @@ public class AnalyticsController(
 
         return Ok(pharmaciesWithDrug);
     }
-
+    
     /// <summary>
     /// Вывести информацию о средней стоимости препаратов каждой фармацевтической группе для каждой аптеки.
     /// </summary>
     [HttpGet("average-cost")]
     public async Task<ActionResult<IEnumerable<GetAverageCostPerGroupPerPharmacyDto>>> GetAverageCostPerGroupPerPharmacy()
     {
-        var averageCosts =
-            (from position in (await positionsRepository.GetAsList())
-                from pharmaceuticalGroup in position.PharmaceuticalGroups
-                group position by new { Pharmacy = position.Pharmacy?.Name, Group = pharmaceuticalGroup.Name }
+        var pharmacies = await pharmacyService.GetAsList();
+        var positions = await positionsService.GetAsList();
+        var prices = await priceService.GetAsList();
+        var productGroups = await productGroupService.GetAsList();
+
+        var averageCosts = 
+            (from pharmacy in pharmacies
+                join position in positions 
+                    on pharmacy.Number equals position.PharmacyId
+                where position.ProductGroupId.HasValue && position.PriceId.HasValue
+                group position by new 
+                { 
+                    PharmacyName = pharmacy.Name, 
+                    position.ProductGroupId 
+                } 
                 into grouped
-                select new GetAverageCostPerGroupPerPharmacyDto
-                (
-                    grouped.Key.Pharmacy,
-                    grouped.Key.Group,
-                    grouped.Average(p => p.Price?.Cost)
-                )).ToList();
+                select new
+                {
+                    grouped.Key.PharmacyName,
+                    PharmaceuticalGroupName = productGroups
+                        .FirstOrDefault(pg => pg.Id == grouped.Key.ProductGroupId)?.Name,
+                    AverageCost = grouped
+                        .Where(p => p.PriceId.HasValue)
+                        .Average(p => prices.FirstOrDefault(price => price.Id == p.PriceId)?.Cost ?? 0)
+                }).ToList();
 
         if (averageCosts.Count == 0)
             return NotFound("No records found.");
 
         return Ok(averageCosts);
     }
-
+    
     /// <summary>
     /// Вывести топ 5 аптек по количеству и объёму продаж данного препарата за указанный период времени.
     /// </summary>
@@ -81,22 +102,39 @@ public class AnalyticsController(
     /// <param name="startDate">Start date</param>
     /// <param name="endDate">End date</param>
     [HttpGet("drug/{drugName}/top-pharmacies")]
-    public async Task<ActionResult<IEnumerable<object>>> GetTopPharmaciesBySales(string drugName, DateTime startDate,
-        DateTime endDate)
+    public async Task<ActionResult<IEnumerable<PharmacyAndNumericStatisticsDto>>> GetTopPharmaciesBySales(
+        string drugName, DateTime startDate, DateTime endDate)
     {
-        var topPharmacies = (await positionsRepository.GetAsList())
-            .Where(p => p.Name == drugName && p.Price?.SellTime >= startDate && p.Price.SellTime <= endDate)
-            .OrderByDescending(p => p.Quantity * p.Price?.Cost)
+        var positions = await positionsService.GetAll(p => p.Name == drugName);
+
+        var prices = await priceService.GetAll(price => price.SellTime >= startDate && price.SellTime <= endDate);
+
+        var topPharmacies = positions
+            .Where(p => p is { Quantity: not null, PriceId: not null } && prices.Any(price => price.Id == p.PriceId))
+            .Select(p =>
+            {
+                var price = prices.First(price => price.Id == p.PriceId);
+                return new
+                {
+                    PharmacyName = p.PharmacyId.HasValue 
+                        ? pharmacyService.GetByKey(p.PharmacyId.Value).Result?.Name 
+                        : null,
+                    SalesVolume = p.Quantity * price.Cost
+                };
+            })
+            .Where(p => p.PharmacyName != null)
+            .OrderByDescending(p => p.SalesVolume)
             .Take(5)
-            .Select(p => new PharmacyAndNumericStatisticsDto( p.Pharmacy?.Name, p.Quantity * p.Price?.Cost, false ))
+            .Select(p => new PharmacyAndNumericStatisticsDto(p.PharmacyName, p.SalesVolume, false))
             .ToList();
 
+        // Если топ-5 аптек пуст, возвращаем NotFound
         if (topPharmacies.Count == 0)
             return NotFound("No sales found.");
 
         return Ok(topPharmacies);
     }
-
+    
     /// <summary>
     /// Вывести список аптек указанного района, продавших заданный препарат более указанного объёма.
     /// </summary>
@@ -106,22 +144,23 @@ public class AnalyticsController(
     [HttpGet("drug/{drugName}/district/{district}/min-volume/{minVolume}")]
     public async Task<ActionResult<IEnumerable<string>>> GetPharmaciesByVolume(string drugName, string district, int minVolume)
     {
-        var pharmacies = (await positionsRepository.GetAsList())
-            .Where(p =>
-                p is { Pharmacy.Address: not null, Pharmacy: not null }
-                && p.Pharmacy.Address.Contains(district)
-                && p.Quantity > minVolume
-                && p.Name == drugName)
-            .Select(p => p.Pharmacy!.Name)
+        var positions = await positionsService.GetAll(p => p.Name == drugName && p.Quantity > minVolume);
+    
+        var pharmacies = await pharmacyService.GetAsList();
+
+        var pharmacyNames = positions
+            .Where(p => p.PharmacyId.HasValue && pharmacies
+                .Any(pharmacy => pharmacy.Number == p.PharmacyId && pharmacy.Address != null && pharmacy.Address.Contains(district)))
+            .Select(p => pharmacies.First(pharmacy => pharmacy.Number == p.PharmacyId).Name)
             .Distinct()
             .ToList();
 
-        if (pharmacies.Count == 0)
+        if (!pharmacyNames.Any())
             return NotFound("No pharmacies found.");
 
-        return Ok(pharmacies);
+        return Ok(pharmacyNames);
     }
-
+    
     /// <summary>
     /// Вывести список аптек, в которых указанный препарат продается с минимальной ценой.
     /// </summary>
@@ -129,15 +168,17 @@ public class AnalyticsController(
     [HttpGet("drug/{drugName}/min-price")]
     public async Task<ActionResult<IEnumerable<string>>> GetPharmaciesWithMinPrice(string drugName)
     {
-        var positions = (await positionsRepository.GetAsList());
-        
+        var positions = await positionsService.GetAll(p => p.Name == drugName && p.PriceId.HasValue);
+        var prices = await priceService.GetAsList();
+
         var minPrice = positions
-            .Where(p => p.Name == drugName)
-            .Min(p => p.Price?.Cost);
+            .Where(p => p.PriceId.HasValue)
+            .Min(p => prices.FirstOrDefault(price => price.Id == p.PriceId)?.Cost ?? decimal.MaxValue);
 
         var pharmaciesWithMinPrice = positions
-            .Where(p => p is { Price: not null } && p.Price.Cost == minPrice && p.Name == drugName)
-            .Select(p => p.Pharmacy?.Name)
+            .Where(p => p.PriceId.HasValue && prices.FirstOrDefault(price => price.Id == p.PriceId)?.Cost == minPrice)
+            .Select(p => pharmacyService.GetByKey(p.PharmacyId!.Value).Result?.Name)
+            .Where(pharmacyName => pharmacyName != null)
             .Distinct()
             .ToList();
 

@@ -16,7 +16,7 @@ public class PositionService(
     IMapper mapper)
     : IEntityService<PositionDto, int>
 {
-    public async Task<List<PositionDto>> GetAll()
+    public async Task<List<PositionDto>> GetAsList()
     {
         var positions = await positionRepository.GetAsList();
         return mapper.Map<List<PositionDto>>(positions);

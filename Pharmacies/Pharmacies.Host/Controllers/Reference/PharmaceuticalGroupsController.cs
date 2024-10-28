@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Pharmacies.Application.Dto;
+using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Application.Interfaces;
 
-namespace Pharmacies.Controllers;
+namespace Pharmacies.Controllers.Reference;
 
 /// <summary>
 /// CRUD Pharmaceutical Groups
@@ -21,7 +21,7 @@ public class PharmaceuticalGroupsController(IEntityService<PharmaceuticalGroupDt
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PharmaceuticalGroupDto>>> GetPharmaceuticalGroups()
     {
-        var groups = await pharmaceuticalGroupService.GetAll();
+        var groups = await pharmaceuticalGroupService.GetAsList();
         return Ok(groups);
     }
 

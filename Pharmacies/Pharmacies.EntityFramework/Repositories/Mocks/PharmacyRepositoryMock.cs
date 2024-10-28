@@ -2,7 +2,7 @@
 using Pharmacies.Interfaces;
 using Pharmacies.Model;
 
-namespace Pharmacies.Repositories.Mocks;
+namespace Pharmacies.EntityFramework.Repositories.Mocks;
 
 public class PharmacyRepositoryMock : IRepository<Pharmacy, int>
 {

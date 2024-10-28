@@ -1,5 +1,4 @@
 using Xunit;
-using Xunit.Sdk;
 using Seed = Pharmacies.Domain.Tests.PharmaciesModelsTestsDataSeed;
 
 namespace Pharmacies.Domain.Tests;

@@ -9,7 +9,7 @@ namespace Pharmacies.Application.Services;
 public class PharmacyService(IRepository<Pharmacy, int> pharmacyRepository, IMapper mapper)
     : IEntityService<PharmacyDto, int>
 {
-    public async Task<List<PharmacyDto>> GetAll()
+    public async Task<List<PharmacyDto>> GetAsList()
     {
         var pharmacies = await pharmacyRepository.GetAsList();
         return mapper.Map<List<PharmacyDto>>(pharmacies);

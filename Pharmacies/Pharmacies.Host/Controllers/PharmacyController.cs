@@ -21,7 +21,7 @@ public class PharmaciesController(IEntityService<PharmacyDto, int> pharmacyServi
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PharmacyDto>>> GetPharmacies()
     {
-        var pharmacies = await pharmacyService.GetAll();
+        var pharmacies = await pharmacyService.GetAsList();
         return Ok(pharmacies);
     }
     

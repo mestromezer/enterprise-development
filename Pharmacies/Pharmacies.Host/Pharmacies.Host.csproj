@@ -16,6 +16,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Pharmacies.Application\Pharmacies.Application.csproj" />
       <ProjectReference Include="..\Pharmacies.Domain\Pharmacies.Domain.csproj" />
+      <ProjectReference Include="..\Pharmacies.EntityFramework\Pharmacies.EntityFramework.csproj" />
     </ItemGroup>
 
     <PropertyGroup>

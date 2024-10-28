@@ -17,7 +17,7 @@ public class PricesController(IEntityService<PriceDto, int> priceService) : Cont
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PriceDto>>> GetPrices()
     {
-        var prices = await priceService.GetAll();
+        var prices = await priceService.GetAsList();
         return Ok(prices);
     }
 

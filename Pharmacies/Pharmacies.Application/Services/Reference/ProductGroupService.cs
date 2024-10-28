@@ -1,5 +1,4 @@
 using AutoMapper;
-using Pharmacies.Application.Dto;
 using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Application.Interfaces;
 using Pharmacies.Interfaces;
@@ -10,7 +9,7 @@ namespace Pharmacies.Application.Services.Reference;
 public class ProductGroupService(IRepository<ProductGroup, int> repository, IMapper mapper)
     : IEntityService<ProductGroupDto, int>
 {
-    public async Task<List<ProductGroupDto>> GetAll()
+    public async Task<List<ProductGroupDto>> GetAsList()
     {
         var productGroups = await repository.GetAsList();
         return mapper.Map<List<ProductGroupDto>>(productGroups);

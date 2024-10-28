@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Pharmacies.Application.Dto;
+using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Application.Interfaces;
 
-namespace Pharmacies.Controllers;
+namespace Pharmacies.Controllers.Reference;
 
 /// <summary>
 /// CRUD Pharmaceutical Group References
@@ -17,7 +17,7 @@ public class PharmaceuticalGroupReferencesController(IEntityService<Pharmaceutic
     /// </summary>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PharmaceuticalGroupReferenceDto>>> GetPharmaceuticalGroupReferences() =>
-        Ok(await pharmaceuticalGroupReferenceService.GetAll());
+        Ok(await pharmaceuticalGroupReferenceService.GetAsList());
 
     /// <summary>
     /// Read

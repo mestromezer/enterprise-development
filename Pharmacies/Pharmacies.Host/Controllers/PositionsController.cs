@@ -17,7 +17,7 @@ public class PositionsController(IEntityService<PositionDto, int> positionServic
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PositionDto>>> GetPositions()
     {
-        var positions = await positionService.GetAll();
+        var positions = await positionService.GetAsList();
         return Ok(positions);
     }
 

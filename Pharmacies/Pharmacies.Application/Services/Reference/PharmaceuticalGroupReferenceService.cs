@@ -6,6 +6,8 @@ using Pharmacies.Interfaces;
 using Pharmacies.Model;
 using Pharmacies.Model.Reference;
 
+namespace Pharmacies.Application.Services.Reference;
+
 public class PharmaceuticalGroupReferenceService(
     IMapper mapper,
     IReferenceRepository<Position, PharmaceuticalGroup> referenceRepository)

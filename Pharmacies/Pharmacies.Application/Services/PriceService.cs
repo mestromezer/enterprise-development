@@ -8,7 +8,7 @@ namespace Pharmacies.Application.Services;
 
 public class PriceService(IRepository<Price, int> priceRepository, IMapper mapper) : IEntityService<PriceDto, int>
 {
-    public async Task<List<PriceDto>> GetAll()
+    public async Task<List<PriceDto>> GetAsList()
     {
         var prices = await priceRepository.GetAsList();
         return mapper.Map<List<PriceDto>>(prices);
