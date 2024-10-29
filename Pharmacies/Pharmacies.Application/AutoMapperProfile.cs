@@ -1,6 +1,8 @@
 using AutoMapper;
 using Pharmacies.Application.Dto;
+using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Model;
+using Pharmacies.Model.Reference;
 
 namespace Pharmacies.Application
 {
@@ -8,8 +10,11 @@ namespace Pharmacies.Application
     {
         public AutoMapperProfile()
         {
-            CreateMap<Position, PositionDto>().ReverseMap();
+            CreateMap<Pharmacy, PharmacyDto>().ReverseMap();
             CreateMap<Price, PriceDto>().ReverseMap();
+            CreateMap<PharmaceuticalGroup, PharmaceuticalGroupDto>().ReverseMap();
+            CreateMap<ProductGroup, ProductGroupDto>().ReverseMap();
+            CreateMap<PharmaceuticalGroupReference, PharmaceuticalGroupReferenceDto>().ReverseMap();
             ConfigurePositionMapping();
         }
 

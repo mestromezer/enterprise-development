@@ -1,10 +1,10 @@
 namespace Pharmacies.Application.Interfaces;
 
-public interface IReferenceService<TParentDto, TChildDto>
+public interface IReferenceService<TParentDto, TChildDto, TParentKey, TChildKey>
 {
     public Task<IDictionary<TParentDto, IEnumerable<TChildDto>>> GetAllForAll();
     
-    public Task<IEnumerable<TChildDto>> GetFor(TParentDto parentKey);
+    public Task<IEnumerable<TChildDto>> GetFor(TParentKey parentKey);
 
-    public Task SetRelation(TParentDto parentKey, List<TChildDto> childKeys);
+    public Task SetRelation(TParentKey parentKey, List<TChildKey> childKeys);
 }

@@ -28,10 +28,10 @@ builder.Services.AddTransient<IRepository<Position, int>, PositionRepositoryMock
 builder.Services.AddTransient<IRepository<Price, int>, PriceRepositoryMock>();
 builder.Services.AddTransient<IRepository<PharmaceuticalGroup, int>, PharmaceuticalGroupRepositoryMock>();
 builder.Services.AddTransient<IRepository<ProductGroup, int>, ProductGroupRepositoryMock>();
-builder.Services.AddTransient<IReferenceRepository<Position, PharmaceuticalGroup>, PharmaceuticalGroupReferenceRepository>();
+builder.Services.AddTransient<IReferenceRepository<Position, PharmaceuticalGroup,int ,int>, PharmaceuticalGroupReferenceRepository>();
 
 // Services
-builder.Services.AddTransient<IReferenceService<PositionDto, PharmaceuticalGroupDto>, PharmaceuticalGroupReferenceService>();
+builder.Services.AddTransient<IReferenceService<PositionDto, PharmaceuticalGroupDto,int ,int>, PharmaceuticalGroupReferenceService>();
 builder.Services.AddTransient<IEntityService<PharmaceuticalGroupDto, int>, PharmaceuticalGroupService>();
 builder.Services.AddTransient<IEntityService<PharmacyDto, int>, PharmacyService>();
 builder.Services.AddTransient<IEntityService<PositionDto, int>, PositionService>();

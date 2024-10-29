@@ -6,9 +6,9 @@ using Pharmacies.Model.Reference;
 namespace Pharmacies.EntityFramework.Repositories.Mocks.Reference;
 
 public class PharmaceuticalGroupReferenceRepository(
-    PositionRepositoryMock positionRepository,
-    PharmaceuticalGroupRepositoryMock pharmaceuticalGroupRepository)
-    : IReferenceRepository<Position, PharmaceuticalGroup>
+    IRepository<Position, int> positionRepository,
+    IRepository<PharmaceuticalGroup, int> pharmaceuticalGroupRepository)
+    : IReferenceRepository<Position, PharmaceuticalGroup, int ,int>
 {
     private static readonly ConcurrentDictionary<int, List<int>> PositionPharmaceuticalGroupRelations = new();
 
@@ -38,11 +38,11 @@ public class PharmaceuticalGroupReferenceRepository(
         return result;
     }
 
-    public async Task<IEnumerable<PharmaceuticalGroup>> GetFor(Position parent)
+    public async Task<IEnumerable<PharmaceuticalGroup>> GetFor(int parentKey)
     {
-        if (!PositionPharmaceuticalGroupRelations.TryGetValue(parent.Code, out var groupIds))
+        if (!PositionPharmaceuticalGroupRelations.TryGetValue(parentKey, out var groupIds))
         {
-            return Enumerable.Empty<PharmaceuticalGroup>();
+            return [];
         }
 
         var groups = new List<PharmaceuticalGroup>();
@@ -58,10 +58,9 @@ public class PharmaceuticalGroupReferenceRepository(
         return groups;
     }
 
-    public Task SetRelation(Position parent, List<PharmaceuticalGroup> childEntities)
+    public Task SetRelation(int parentKey, List<int> childEntitiesKeys)
     {
-        var groupIds = childEntities.Select(group => group.Id).ToList();
-        PositionPharmaceuticalGroupRelations[parent.Code] = groupIds;
+        PositionPharmaceuticalGroupRelations[parentKey] = childEntitiesKeys;
 
         return Task.CompletedTask;
     }

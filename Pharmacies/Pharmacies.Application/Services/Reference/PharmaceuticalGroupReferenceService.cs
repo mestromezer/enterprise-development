@@ -10,8 +10,8 @@ namespace Pharmacies.Application.Services.Reference;
 
 public class PharmaceuticalGroupReferenceService(
     IMapper mapper,
-    IReferenceRepository<Position, PharmaceuticalGroup> referenceRepository)
-    : IReferenceService<PositionDto, PharmaceuticalGroupDto>
+    IReferenceRepository<Position, PharmaceuticalGroup, int ,int> referenceRepository)
+    : IReferenceService<PositionDto, PharmaceuticalGroupDto, int , int>
 {
     public async Task<IDictionary<PositionDto, IEnumerable<PharmaceuticalGroupDto>>> GetAllForAll()
     {
@@ -19,26 +19,21 @@ public class PharmaceuticalGroupReferenceService(
 
         var result = allRelations.ToDictionary(
             kvp => mapper.Map<PositionDto>(kvp.Key),
-            kvp => kvp.Value.Select(child => mapper.Map<PharmaceuticalGroupDto>(child))
+            kvp => kvp.Value.Select(mapper.Map<PharmaceuticalGroupDto>)
         );
 
         return result;
     }
 
-    public async Task<IEnumerable<PharmaceuticalGroupDto>> GetFor(PositionDto parentKey)
+    public async Task<IEnumerable<PharmaceuticalGroupDto>> GetFor(int parentKey)
     {
-        var parentEntity = mapper.Map<Position>(parentKey);
+        var relatedEntities = await referenceRepository.GetFor(parentKey);
 
-        var relatedEntities = await referenceRepository.GetFor(parentEntity);
-
-        return relatedEntities.Select(child => mapper.Map<PharmaceuticalGroupDto>(child));
+        return relatedEntities.Select(mapper.Map<PharmaceuticalGroupDto>);
     }
 
-    public async Task SetRelation(PositionDto parentKey, List<PharmaceuticalGroupDto> childKeys)
+    public async Task SetRelation(int parentKey, List<int> childKeys)
     {
-        var parentEntity = mapper.Map<Position>(parentKey);
-        var childEntities = childKeys.Select(child => mapper.Map<PharmaceuticalGroup>(child)).ToList();
-
-        await referenceRepository.SetRelation(parentEntity, childEntities);
+        await referenceRepository.SetRelation(parentKey, childKeys);
     }
 }

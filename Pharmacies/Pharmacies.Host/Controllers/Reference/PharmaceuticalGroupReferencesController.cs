@@ -1,71 +1,54 @@
 using Microsoft.AspNetCore.Mvc;
+using Pharmacies.Application.Dto;
 using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Application.Interfaces;
 
 namespace Pharmacies.Controllers.Reference;
 
 /// <summary>
-/// CRUD Pharmaceutical Group References
+/// Контроллер работает для установления связей между фарм. группой и позициями в аптеках
 /// </summary>
-[Route("api/[controller]")]
+/// <param name="referenceService"></param>
 [ApiController]
-public class PharmaceuticalGroupReferencesController(IEntityService<PharmaceuticalGroupReferenceDto, int> pharmaceuticalGroupReferenceService)
+[Route("api/[controller]")]
+public class PharmaceuticalGroupReferenceController(
+    IReferenceService<PositionDto, PharmaceuticalGroupDto, int ,int> referenceService)
     : ControllerBase
 {
     /// <summary>
-    /// Read
+    /// Возврашает все связи
     /// </summary>
+    /// <returns>Ключ - позиция, значение - список фарм. групп</returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PharmaceuticalGroupReferenceDto>>> GetPharmaceuticalGroupReferences() =>
-        Ok(await pharmaceuticalGroupReferenceService.GetAsList());
-
-    /// <summary>
-    /// Read
-    /// </summary>
-    /// <param name="id">id</param>
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<PharmaceuticalGroupReferenceDto>> GetPharmaceuticalGroupReference(int id)
+    public async Task<ActionResult<IDictionary<PositionDto, IEnumerable<PharmaceuticalGroupDto>>>> GetAllForAll()
     {
-        var reference = await pharmaceuticalGroupReferenceService.GetByKey(id);
-        if (reference == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(reference);
+        var result = await referenceService.GetAllForAll();
+        return Ok(result);
     }
 
     /// <summary>
-    /// Create
+    /// По id позиции возвращает список фарм. групп
     /// </summary>
-    /// <param name="referenceDto">Data</param>
-    [HttpPost]
-    public async Task<ActionResult<PharmaceuticalGroupReferenceDto>> CreatePharmaceuticalGroupReference(PharmaceuticalGroupReferenceDto referenceDto)
+    /// <param name="code">Id позиции</param>
+    [HttpGet("{code:int}")]
+    public async Task<ActionResult<IEnumerable<PharmaceuticalGroupDto>>> GetFor(int code)
     {
-        await pharmaceuticalGroupReferenceService.Add(referenceDto);
-        return Created();
+        var result = await referenceService.GetFor(code);
+
+        return Ok(result);
     }
 
     /// <summary>
-    /// Update
+    /// Устанавливает связь позиции и фарм. группы
     /// </summary>
-    /// <param name="id">Id</param>
-    /// <param name="updatedReferenceDto">Data</param>
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdatePharmaceuticalGroupReference(int id, PharmaceuticalGroupReferenceDto updatedReferenceDto)
+    /// <param name="code"></param>
+    /// <param name="childKeys"></param>
+    /// <returns></returns>
+    [HttpPost("{code:int}")]
+    public async Task<IActionResult> SetRelation(int code, [FromBody] List<int> childKeys)
     {
-        await pharmaceuticalGroupReferenceService.Update(id, updatedReferenceDto);
-        return NoContent();
-    }
+        await referenceService.SetRelation(code, childKeys);
 
-    /// <summary>
-    /// Delete
-    /// </summary>
-    /// <param name="id">Id</param>
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeletePharmaceuticalGroupReference(int id)
-    {
-        await pharmaceuticalGroupReferenceService.Delete(id);
         return NoContent();
     }
 }
