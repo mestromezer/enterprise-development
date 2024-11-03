@@ -6,7 +6,7 @@ using Pharmacies.Model.Reference;
 
 namespace Pharmacies.EntityFramework.Repositories.MySql.Reference;
 
-public class PositionPharmaceuticalGroupRepository(PharmacyMySqlContext context)
+public class PharmaceuticalGroupReferenceRepository(PharmacyMySqlContext context)
     : IReferenceRepository<Position, PharmaceuticalGroup, int, int>
 {
     public async Task<IDictionary<Position, IEnumerable<PharmaceuticalGroup>>> GetAllForAll()
@@ -44,7 +44,7 @@ public class PositionPharmaceuticalGroupRepository(PharmacyMySqlContext context)
             .Where(childKey => !existingChildIds.Contains(childKey))
             .Select(childKey => new PharmaceuticalGroupReference
             {
-                Id = -1,
+                Id = 0,
                 PositionId = parentKey,
                 PharmaceuticalGroupId = childKey
             });

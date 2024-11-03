@@ -4,24 +4,20 @@ using Pharmacies.Model.Reference;
 
 namespace Pharmacies.EntityFramework.MySqlConfiguration;
 
-public class PharmacyMySqlContext : DbContext
+public sealed class PharmacyMySqlContext : DbContext
 {
+    public PharmacyMySqlContext(DbContextOptions<PharmacyMySqlContext> options) 
+        :base(options)
+    {
+        Database.EnsureCreated();
+    }
+    
     public DbSet<Pharmacy> Pharmacies { get; set; }
     public DbSet<Position> Positions { get; set; }
     public DbSet<ProductGroup> ProductGroups { get; set; }
     public DbSet<Price> Prices { get; set; }
     public DbSet<PharmaceuticalGroup> PharmaceuticalGroups { get; set; }
     public DbSet<PharmaceuticalGroupReference> PharmaceuticalGroupReferences { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseMySql(
-            "Server=mysql_database;Database=pharmacies;User=root;Password=1;",
-            new MySqlServerVersion(new Version(9, 0, 1))
-        );
-
-        Database.EnsureCreated();
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

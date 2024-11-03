@@ -1,39 +1,40 @@
 using AutoMapper;
-using Pharmacies.Application.Dto;
-using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Application.Interfaces;
 using Pharmacies.Interfaces;
 using Pharmacies.Model;
 using Pharmacies.Model.Reference;
 
-namespace Pharmacies.Application.Services.Reference;
-
-public class PharmaceuticalGroupReferenceService(
-    IMapper mapper,
-    IReferenceRepository<Position, PharmaceuticalGroup, int ,int> referenceRepository)
-    : IReferenceService<PositionDto, PharmaceuticalGroupDto, int , int>
+namespace Pharmacies.Application.Services.Reference
 {
-    public async Task<IDictionary<PositionDto, IEnumerable<PharmaceuticalGroupDto>>> GetAllForAll()
+    public class PharmaceuticalGroupReferenceService(
+        IMapper mapper,
+        IReferenceRepository<Position, PharmaceuticalGroup, int, int> referenceRepository)
+        : IReferenceService<int, int>
     {
-        var allRelations = await referenceRepository.GetAllForAll();
+        private readonly IMapper _mapper = mapper;
 
-        var result = allRelations.ToDictionary(
-            kvp => mapper.Map<PositionDto>(kvp.Key),
-            kvp => kvp.Value.Select(mapper.Map<PharmaceuticalGroupDto>)
-        );
+        public async Task<IDictionary<int, IEnumerable<int>>> GetAllForAll()
+        {
+            var allRelations = await referenceRepository.GetAllForAll();
 
-        return result;
-    }
+            var result = allRelations.ToDictionary(
+                kvp => kvp.Key.Code,
+                kvp => kvp.Value.Select(child => child.Id)
+            );
 
-    public async Task<IEnumerable<PharmaceuticalGroupDto>> GetFor(int parentKey)
-    {
-        var relatedEntities = await referenceRepository.GetFor(parentKey);
+            return result;
+        }
 
-        return relatedEntities.Select(mapper.Map<PharmaceuticalGroupDto>);
-    }
+        public async Task<IEnumerable<int>> GetFor(int parentKey)
+        {
+            var relatedEntities = await referenceRepository.GetFor(parentKey);
 
-    public async Task SetRelation(int parentKey, List<int> childKeys)
-    {
-        await referenceRepository.SetRelation(parentKey, childKeys);
+            return relatedEntities.Select(child => child.Id); // Возвращаем Id для каждой PharmaceuticalGroup
+        }
+
+        public async Task SetRelation(int parentKey, List<int> childKeys)
+        {
+            await referenceRepository.SetRelation(parentKey, childKeys);
+        }
     }
 }

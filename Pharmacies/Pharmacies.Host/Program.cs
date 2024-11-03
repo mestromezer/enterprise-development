@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Pharmacies.Application;
 using Pharmacies.Application.Dto;
@@ -9,9 +10,12 @@ using Pharmacies.Application.Services.Reference;
 using Pharmacies.EntityFramework.MySqlConfiguration;
 using Pharmacies.EntityFramework.Repositories.Mocks;
 using Pharmacies.EntityFramework.Repositories.Mocks.Reference;
+using Pharmacies.EntityFramework.Repositories.MySql;
+using Pharmacies.EntityFramework.Repositories.MySql.Reference;
 using Pharmacies.Interfaces;
 using Pharmacies.Model;
 using Pharmacies.Model.Reference;
+using PharmaceuticalGroupReferenceRepository = Pharmacies.EntityFramework.Repositories.MySql.Reference.PharmaceuticalGroupReferenceRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,21 +25,28 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Database context
-builder.Services.AddDbContext<PharmacyMySqlContext>();
+builder.Services.AddDbContext<PharmacyMySqlContext>(options =>
+{
+    options
+        .UseMySql(
+            builder.Configuration.GetConnectionString("mysql"),
+            new MySqlServerVersion(new Version(9, 0, 1)
+            ));
+});
 
 // Mapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 // Repositories
-builder.Services.AddTransient<IRepository<Pharmacy, int>, PharmacyRepositoryMock>();
-builder.Services.AddTransient<IRepository<Position, int>, PositionRepositoryMock>();
-builder.Services.AddTransient<IRepository<Price, int>, PriceRepositoryMock>();
-builder.Services.AddTransient<IRepository<PharmaceuticalGroup, int>, PharmaceuticalGroupRepositoryMock>();
-builder.Services.AddTransient<IRepository<ProductGroup, int>, ProductGroupRepositoryMock>();
+builder.Services.AddTransient<IRepository<Pharmacy, int>, PharmacyRepository>();
+builder.Services.AddTransient<IRepository<Position, int>, PositionRepository>();
+builder.Services.AddTransient<IRepository<Price, int>, PriceRepository>();
+builder.Services.AddTransient<IRepository<PharmaceuticalGroup, int>, PharmaceuticalGroupRepository>();
+builder.Services.AddTransient<IRepository<ProductGroup, int>, ProductGroupRepository>();
 builder.Services.AddTransient<IReferenceRepository<Position, PharmaceuticalGroup,int ,int>, PharmaceuticalGroupReferenceRepository>();
 
 // Services
-builder.Services.AddTransient<IReferenceService<PositionDto, PharmaceuticalGroupDto,int ,int>, PharmaceuticalGroupReferenceService>();
+builder.Services.AddTransient<IReferenceService<int ,int>, PharmaceuticalGroupReferenceService>();
 builder.Services.AddTransient<IEntityService<PharmaceuticalGroupDto, int>, PharmaceuticalGroupService>();
 builder.Services.AddTransient<IEntityService<PharmacyDto, int>, PharmacyService>();
 builder.Services.AddTransient<IEntityService<PositionDto, int>, PositionService>();

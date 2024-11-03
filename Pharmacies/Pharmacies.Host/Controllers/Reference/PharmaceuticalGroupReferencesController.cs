@@ -12,7 +12,7 @@ namespace Pharmacies.Controllers.Reference;
 [ApiController]
 [Route("api/[controller]")]
 public class PharmaceuticalGroupReferenceController(
-    IReferenceService<PositionDto, PharmaceuticalGroupDto, int ,int> referenceService)
+    IReferenceService<int ,int> referenceService)
     : ControllerBase
 {
     /// <summary>

@@ -19,6 +19,7 @@ public class ProductGroupRepository(PharmacyMySqlContext context) : IRepository<
 
     public async Task Add(ProductGroup newRecord)
     {
+        newRecord.Id = 0;
         await context.ProductGroups.AddAsync(newRecord);
         await context.SaveChangesAsync();
     }

@@ -19,6 +19,7 @@ public class PharmaceuticalGroupRepository(PharmacyMySqlContext context) : IRepo
 
     public async Task Add(PharmaceuticalGroup newRecord)
     {
+        newRecord.Id = 0;
         await context.PharmaceuticalGroups.AddAsync(newRecord);
         await context.SaveChangesAsync();
     }

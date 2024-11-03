@@ -19,6 +19,7 @@ public class PriceRepository(PharmacyMySqlContext context) : IRepository<Price, 
 
     public async Task Add(Price newRecord)
     {
+        newRecord.Id = 0;
         await context.Prices.AddAsync(newRecord);
         await context.SaveChangesAsync();
     }
