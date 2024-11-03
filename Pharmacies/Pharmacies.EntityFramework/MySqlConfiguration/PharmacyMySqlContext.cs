@@ -16,9 +16,11 @@ public class PharmacyMySqlContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseMySql(
-            "Server=mysql_database;Database=pharmacies;User=your_user;Password=your_password;",
-            new MySqlServerVersion(new Version(8, 0, 21))
+            "Server=mysql_database;Database=pharmacies;User=root;Password=1;",
+            new MySqlServerVersion(new Version(9, 0, 1))
         );
+
+        Database.EnsureCreated();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

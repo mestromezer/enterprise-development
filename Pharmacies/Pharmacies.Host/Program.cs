@@ -6,6 +6,7 @@ using Pharmacies.Application.Dto.Reference;
 using Pharmacies.Application.Interfaces;
 using Pharmacies.Application.Services;
 using Pharmacies.Application.Services.Reference;
+using Pharmacies.EntityFramework.MySqlConfiguration;
 using Pharmacies.EntityFramework.Repositories.Mocks;
 using Pharmacies.EntityFramework.Repositories.Mocks.Reference;
 using Pharmacies.Interfaces;
@@ -18,6 +19,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Database context
+builder.Services.AddDbContext<PharmacyMySqlContext>();
 
 // Mapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
