@@ -35,11 +35,7 @@ public class PriceService(IRepository<Price, int> priceRepository, IMapper mappe
 
     public async Task Update(int key, PriceDto entityDto)
     {
-        var price = await priceRepository.GetByKey(key);
-        if (price == null)
-        {
-            throw new Exception($"Price with key {key} not found.");
-        }
+        var price = await priceRepository.GetByKey(key) ?? throw new Exception($"Price with key {key} not found.");
 
         mapper.Map(entityDto, price);
         await priceRepository.Update(key, price);
@@ -47,11 +43,8 @@ public class PriceService(IRepository<Price, int> priceRepository, IMapper mappe
 
     public async Task Delete(int key)
     {
-        var price = await priceRepository.GetByKey(key);
-        if (price == null)
-        {
+        if (await priceRepository.GetByKey(key) == null)
             throw new Exception($"Price with key {key} not found.");
-        }
 
         await priceRepository.Delete(key);
     }

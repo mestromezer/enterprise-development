@@ -10,7 +10,6 @@ namespace Pharmacies.Application.Services;
 public class PositionService(
     IRepository<Position, int> positionRepository,
     IRepository<ProductGroup, int> productGroupRepository,
-    IRepository<PharmaceuticalGroup, int> pharmaceuticalGroupRepository,
     IRepository<Pharmacy, int> pharmacyRepository,
     IRepository<Price, int> priceRepository,
     IMapper mapper)
@@ -59,11 +58,8 @@ public class PositionService(
 
     public async Task Update(int key, PositionDto entityDto)
     {
-        var position = await positionRepository.GetByKey(key);
-        if (position == null)
-        {
-            throw new Exception($"Position with key {key} not found.");
-        }
+        var position = await positionRepository.GetByKey(key) 
+                       ?? throw new Exception($"Position with key {key} not found.");
 
         mapper.Map(entityDto, position);
 
