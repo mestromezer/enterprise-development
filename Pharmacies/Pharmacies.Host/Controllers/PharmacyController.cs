@@ -19,6 +19,7 @@ public class PharmaciesController(IEntityService<PharmacyDto, int> pharmacyServi
     /// Read
     /// </summary>
     [HttpGet]
+    [ProducesResponseType(200)]
     public async Task<ActionResult<IEnumerable<PharmacyDto>>> GetPharmacies()
     {
         var pharmacies = await pharmacyService.GetAsList();
@@ -30,6 +31,8 @@ public class PharmaciesController(IEntityService<PharmacyDto, int> pharmacyServi
     /// </summary>
     /// <param name="number">Key</param>
     [HttpGet("{number:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
     public async Task<ActionResult<PharmacyDto>> GetPharmacy(int number)
     {
         var pharmacy = await pharmacyService.GetByKey(number);
@@ -46,6 +49,7 @@ public class PharmaciesController(IEntityService<PharmacyDto, int> pharmacyServi
     /// </summary>
     /// <param name="pharmacyDto">Data</param>
     [HttpPost]
+    [ProducesResponseType(201)]
     public async Task<ActionResult<PharmacyDto>> CreatePharmacy(PharmacyDto pharmacyDto)
     {
         await pharmacyService.Add(pharmacyDto);
@@ -58,6 +62,7 @@ public class PharmaciesController(IEntityService<PharmacyDto, int> pharmacyServi
     /// <param name="number">Key</param>
     /// <param name="updatedPharmacyDto">Data</param>
     [HttpPut("{number:int}")]
+    [ProducesResponseType(204)]
     public async Task<IActionResult> UpdatePharmacy(int number, PharmacyDto updatedPharmacyDto)
     {
         await pharmacyService.Update(number, updatedPharmacyDto);
@@ -69,6 +74,7 @@ public class PharmaciesController(IEntityService<PharmacyDto, int> pharmacyServi
     /// </summary>
     /// <param name="number">Key</param>
     [HttpDelete("{number:int}")]
+    [ProducesResponseType(204)]
     public async Task<IActionResult> DeletePharmacy(int number)
     {
         await pharmacyService.Delete(number);

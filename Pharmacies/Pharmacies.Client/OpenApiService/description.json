@@ -10,7 +10,7 @@
         "tags": [
           "Analytics"
         ],
-        "summary": "Вывести сведения о всех препаратах в заданной аптеке, упорядочить по названию.",
+        "summary": "Р’С‹РІРµСЃС‚Рё СЃРІРµРґРµРЅРёСЏ Рѕ РІСЃРµС… РїСЂРµРїР°СЂР°С‚Р°С… РІ Р·Р°РґР°РЅРЅРѕР№ Р°РїС‚РµРєРµ, СѓРїРѕСЂСЏРґРѕС‡РёС‚СЊ РїРѕ РЅР°Р·РІР°РЅРёСЋ.",
         "parameters": [
           {
             "name": "pharmacyNumber",
@@ -61,7 +61,7 @@
         "tags": [
           "Analytics"
         ],
-        "summary": "Вывести для данного препарата подробный список всех аптек с указанием количества препарата в аптеках.",
+        "summary": "Р’С‹РІРµСЃС‚Рё РґР»СЏ РґР°РЅРЅРѕРіРѕ РїСЂРµРїР°СЂР°С‚Р° РїРѕРґСЂРѕР±РЅС‹Р№ СЃРїРёСЃРѕРє РІСЃРµС… Р°РїС‚РµРє СЃ СѓРєР°Р·Р°РЅРёРµРј РєРѕР»РёС‡РµСЃС‚РІР° РїСЂРµРїР°СЂР°С‚Р° РІ Р°РїС‚РµРєР°С….",
         "parameters": [
           {
             "name": "drugName",
@@ -111,7 +111,7 @@
         "tags": [
           "Analytics"
         ],
-        "summary": "Вывести информацию о средней стоимости препаратов каждой фармацевтической группе для каждой аптеки.",
+        "summary": "Р’С‹РІРµСЃС‚Рё РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃСЂРµРґРЅРµР№ СЃС‚РѕРёРјРѕСЃС‚Рё РїСЂРµРїР°СЂР°С‚РѕРІ РєР°Р¶РґРѕР№ С„Р°СЂРјР°С†РµРІС‚РёС‡РµСЃРєРѕР№ РіСЂСѓРїРїРµ РґР»СЏ РєР°Р¶РґРѕР№ Р°РїС‚РµРєРё.",
         "responses": {
           "200": {
             "description": "OK",
@@ -150,7 +150,7 @@
         "tags": [
           "Analytics"
         ],
-        "summary": "Вывести топ 5 аптек по количеству и объёму продаж данного препарата за указанный период времени.",
+        "summary": "Р’С‹РІРµСЃС‚Рё С‚РѕРї 5 Р°РїС‚РµРє РїРѕ РєРѕР»РёС‡РµСЃС‚РІСѓ Рё РѕР±СЉС‘РјСѓ РїСЂРѕРґР°Р¶ РґР°РЅРЅРѕРіРѕ РїСЂРµРїР°СЂР°С‚Р° Р·Р° СѓРєР°Р·Р°РЅРЅС‹Р№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё.",
         "parameters": [
           {
             "name": "drugName",
@@ -218,7 +218,7 @@
         "tags": [
           "Analytics"
         ],
-        "summary": "Вывести список аптек указанного района, продавших заданный препарат более указанного объёма.",
+        "summary": "Р’С‹РІРµСЃС‚Рё СЃРїРёСЃРѕРє Р°РїС‚РµРє СѓРєР°Р·Р°РЅРЅРѕРіРѕ СЂР°Р№РѕРЅР°, РїСЂРѕРґР°РІС€РёС… Р·Р°РґР°РЅРЅС‹Р№ РїСЂРµРїР°СЂР°С‚ Р±РѕР»РµРµ СѓРєР°Р·Р°РЅРЅРѕРіРѕ РѕР±СЉС‘РјР°.",
         "parameters": [
           {
             "name": "drugName",
@@ -287,7 +287,7 @@
         "tags": [
           "Analytics"
         ],
-        "summary": "Вывести список аптек, в которых указанный препарат продается с минимальной ценой.",
+        "summary": "Р’С‹РІРµСЃС‚Рё СЃРїРёСЃРѕРє Р°РїС‚РµРє, РІ РєРѕС‚РѕСЂС‹С… СѓРєР°Р·Р°РЅРЅС‹Р№ РїСЂРµРїР°СЂР°С‚ РїСЂРѕРґР°РµС‚СЃСЏ СЃ РјРёРЅРёРјР°Р»СЊРЅРѕР№ С†РµРЅРѕР№.",
         "parameters": [
           {
             "name": "drugName",
@@ -337,7 +337,7 @@
         "tags": [
           "PharmaceuticalGroupReference"
         ],
-        "summary": "Возврашает все связи",
+        "summary": "Р’РѕР·РІСЂР°С€Р°РµС‚ РІСЃРµ СЃРІСЏР·Рё",
         "responses": {
           "200": {
             "description": "OK",
@@ -385,12 +385,12 @@
         "tags": [
           "PharmaceuticalGroupReference"
         ],
-        "summary": "По id позиции возвращает список фарм. групп",
+        "summary": "РџРѕ id РїРѕР·РёС†РёРё РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє С„Р°СЂРј. РіСЂСѓРїРї",
         "parameters": [
           {
             "name": "code",
             "in": "path",
-            "description": "Id позиции",
+            "description": "Id РїРѕР·РёС†РёРё",
             "required": true,
             "schema": {
               "type": "integer",
@@ -434,7 +434,7 @@
         "tags": [
           "PharmaceuticalGroupReference"
         ],
-        "summary": "Устанавливает связь позиции и фарм. группы",
+        "summary": "РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ СЃРІСЏР·СЊ РїРѕР·РёС†РёРё Рё С„Р°СЂРј. РіСЂСѓРїРїС‹",
         "parameters": [
           {
             "name": "code",
@@ -745,8 +745,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Created",
             "content": {
               "text/plain": {
                 "schema": {
@@ -806,6 +806,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -847,8 +867,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           }
         }
       },
@@ -870,8 +890,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           }
         }
       }
@@ -1135,8 +1155,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Created",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1196,6 +1216,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -1237,8 +1277,28 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -1260,8 +1320,28 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -1598,8 +1678,7 @@
           },
           "productionTime": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           },
           "ifCash": {
             "type": "boolean",
@@ -1615,11 +1694,37 @@
           },
           "sellTime": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           }
         },
         "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {}
       },
       "ProductGroupDto": {
         "required": [

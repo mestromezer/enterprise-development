@@ -1,0 +1,184 @@
+﻿@page "/prices"
+@using global::Pharmacies.Client.OpenApiService
+@inject IPharmaciesApiWrapper ApiWrapper
+
+<h3>Цены</h3>
+
+<button class="btn btn-primary" @onclick="ShowCreatePriceModal">Добавить запись</button>
+
+@if (PricesList != null)
+{
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Производитель</th>
+                <th>Цена</th>
+                <th>Дата</th>
+                <th>Способ оплаты</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var price in PricesList)
+            {
+                <tr>
+                    <td>@price.Manufacturer</td>
+                    <td>@price.Cost</td>
+                    <td>@price.SellTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@(price.IfCash == true ? "Наличные" : "Карта")</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => ShowEditPriceModal(price)">Редактировать</button>
+                        <button class="btn btn-danger" @onclick="() => DeletePrice(price.Id)">Удалить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Create Price Modal -->
+<EditForm Model="createPrice" OnValidSubmit="CreatePriceHandler">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="modal" tabindex="-1" style="display: @(isCreateModalVisible ? "block" : "none")">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Price</h5>
+                    <button type="button" class="btn-close" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="createManufacturer">Производитель</label>
+                        <InputText id="createManufacturer" class="form-control" @bind-Value="createPrice.Manufacturer" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createCost">Цена</label>
+                        <InputNumber id="createCost" class="form-control" @bind-Value="createPrice.Cost" Step="0.01" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createProductionTime">Дата производства</label>
+                        <InputDate id="createProductionTime" class="form-control" @bind-Value="createPrice.ProductionTime"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="createSellTime">Дата</label>
+                        <InputDate id="createSellTime" class="form-control" @bind-Value="createPrice.SellTime" />
+                    </div>
+                    <div class="mb-3 form-check">
+                        <InputCheckbox id="createIfCash" class="form-check-input" @bind-Value="IfCash" />
+                        <label class="form-check-label" for="createIfCash">Наличные</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+<!-- Edit Price Modal -->
+<EditForm Model="editPrice" OnValidSubmit="EditPriceHandler">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="modal" tabindex="-1" style="display: @(isEditModalVisible ? "block" : "none")">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Price</h5>
+                    <button type="button" class="btn-close" @onclick="CloseEditModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editManufacturer">Производитель</label>
+                        <InputText id="editManufacturer" class="form-control" @bind-Value="editPrice.Manufacturer" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCost">Цена</label>
+                        <InputNumber id="editCost" class="form-control" @bind-Value="editPrice.Cost" Step="0.01" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProductionTime">Production Time</label>
+                        <InputDate id="editProductionTime" class="form-control" @bind-Value="editPrice.ProductionTime" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSellTime">Дата</label>
+                        <InputDate id="editSellTime" class="form-control" @bind-Value="editPrice.SellTime" />
+                    </div>
+                    <div class="mb-3 form-check">
+                        <InputCheckbox id="editIfCash" class="form-check-input" @bind-Value="IfCash" />
+                        <label class="form-check-label" for="editIfCash">Наличные</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseEditModal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private IList<PriceDto>? PricesList { get; set; }
+    private PriceDto createPrice = new PriceDto();
+    private PriceDto editPrice = new PriceDto();
+    private bool isCreateModalVisible = false;
+    private bool isEditModalVisible = false;
+
+    private bool IfCash { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        PricesList = await ApiWrapper.GetAllPrices();
+    }
+
+    private void ShowCreatePriceModal()
+    {
+        createPrice = new PriceDto();
+        isCreateModalVisible = true;
+    }
+
+    private void ShowEditPriceModal(PriceDto price)
+    {
+        editPrice = price;
+        isEditModalVisible = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        isCreateModalVisible = false;
+        createPrice = new PriceDto();
+    }
+
+    private void CloseEditModal()
+    {
+        isEditModalVisible = false;
+        editPrice = new PriceDto();
+    }
+
+    private async Task CreatePriceHandler()
+    {
+        createPrice.IfCash = IfCash;
+        await ApiWrapper.CreatePrice(createPrice);
+        PricesList = await ApiWrapper.GetAllPrices();
+        CloseCreateModal();
+    }
+
+    private async Task EditPriceHandler()
+    {
+        editPrice.IfCash = IfCash;
+        await ApiWrapper.UpdatePrice(editPrice.Id, editPrice);
+        PricesList = await ApiWrapper.GetAllPrices();
+        CloseEditModal();
+    }
+
+    private async Task DeletePrice(int priceId)
+    {
+        await ApiWrapper.DeletePrice(priceId);
+        PricesList = await ApiWrapper.GetAllPrices();
+    }
+}

@@ -53,6 +53,8 @@ builder.Services.AddTransient<IEntityService<PositionDto, int>, PositionService>
 builder.Services.AddTransient<IEntityService<PriceDto, int>, PriceService>();
 builder.Services.AddTransient<IEntityService<ProductGroupDto, int>, ProductGroupService>();
 
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy => { policy.AllowAnyOrigin(); policy.AllowAnyMethod(); policy.AllowAnyHeader(); }));
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Pharmacies API", Version = "v1" });
@@ -79,6 +81,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors();
 
 app.MapControllers();
 

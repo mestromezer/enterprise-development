@@ -26,6 +26,8 @@ public class PricesController(IEntityService<PriceDto, int> priceService) : Cont
     /// </summary>
     /// <param name="id">Price ID</param>
     [HttpGet("{id:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
     public async Task<ActionResult<PriceDto>> GetPrice(int id)
     {
         var price = await priceService.GetByKey(id);
@@ -42,6 +44,7 @@ public class PricesController(IEntityService<PriceDto, int> priceService) : Cont
     /// </summary>
     /// <param name="priceDto">Data for new price</param>
     [HttpPost]
+    [ProducesResponseType(201)]
     public async Task<ActionResult<PriceDto>> CreatePrice(PriceDto priceDto)
     {
         await priceService.Add(priceDto);
@@ -54,6 +57,8 @@ public class PricesController(IEntityService<PriceDto, int> priceService) : Cont
     /// <param name="id">Price ID</param>
     /// <param name="priceDto">Updated price data</param>
     [HttpPut("{id:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> UpdatePrice(int id, PriceDto priceDto)
     {
         var existingPrice = await priceService.GetByKey(id);
@@ -71,6 +76,8 @@ public class PricesController(IEntityService<PriceDto, int> priceService) : Cont
     /// </summary>
     /// <param name="id">Price ID</param>
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> DeletePrice(int id)
     {
         var price = await priceService.GetByKey(id);

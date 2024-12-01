@@ -6,13 +6,13 @@ public class PriceDto
     
     public string? Manufacturer { get; set; }
     
-    public DateTime? ProductionTime { get; set; }
-    
+    public DateTime ProductionTime { get; set; } = DateTime.MinValue;
+
     public bool? IfCash { get; set; }
     
     public string? SellerOrganizationName { get; set; }
     
     public decimal Cost { get; set; }
     
-    public DateTime? SellTime { get; set; }
+    public DateTime SellTime { get; set; } = DateTime.Now;
 }
