@@ -1,0 +1,112 @@
+﻿@page "/pharmacies"
+@inject IPharmaciesApiWrapper ApiWrapper
+@using System.Net.Http.Json
+
+<h3>Pharmacies</h3>
+
+<button class="btn btn-primary" @onclick="ShowCreatePharmacyModal">Add New Pharmacy</button>
+
+@if (pharmacies != null)
+{
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Director</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pharmacy in pharmacies)
+            {
+                <tr>
+                    <td>@pharmacy.Name</td>
+                    <td>@pharmacy.Phone</td>
+                    <td>@pharmacy.Address</td>
+                    <td>@pharmacy.DirectorFullName</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => ShowEditPharmacyModal(pharmacy)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => DeletePharmacy(pharmacy.Number)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<EditForm Model="currentPharmacy" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="name">Pharmacy Name</label>
+        <InputText id="name" class="form-control" @bind-Value="currentPharmacy.Name" />
+    </div>
+    <div class="mb-3">
+        <label for="phone">Phone</label>
+        <InputText id="phone" class="form-control" @bind-Value="currentPharmacy.Phone" />
+    </div>
+    <div class="mb-3">
+        <label for="address">Address</label>
+        <InputText id="address" class="form-control" @bind-Value="currentPharmacy.Address" />
+    </div>
+    <div class="mb-3">
+        <label for="director">Director</label>
+        <InputText id="director" class="form-control" @bind-Value="currentPharmacy.DirectorFullName" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+</EditForm>
+
+@code {
+    private IList<PharmacyDto> pharmacies;
+    private PharmacyDto currentPharmacy = new PharmacyDto();
+    private bool isEditMode = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pharmacies = await ApiWrapper.GetAllPharmacies();
+    }
+
+    private void ShowCreatePharmacyModal()
+    {
+        currentPharmacy = new PharmacyDto();
+        isEditMode = false;
+    }
+
+    private void ShowEditPharmacyModal(PharmacyDto pharmacy)
+    {
+        currentPharmacy = pharmacy;
+        isEditMode = true;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (isEditMode)
+        {
+            await ApiWrapper.UpdatePharmacy(currentPharmacy.Number, currentPharmacy);
+        }
+        else
+        {
+            await ApiWrapper.CreatePharmacy(currentPharmacy);
+        }
+
+        pharmacies = await ApiWrapper.GetAllPharmacies();
+
+        CloseModal();
+    }
+
+    private void CloseModal()
+    {
+        currentPharmacy = new PharmacyDto();
+    }
+
+    private async Task DeletePharmacy(int pharmacyNumber)
+    {
+        await ApiWrapper.DeletePharmacy(pharmacyNumber);
+        pharmacies = await ApiWrapper.GetAllPharmacies();
+    }
+}
