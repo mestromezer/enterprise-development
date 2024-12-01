@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pharmacies.Application", "P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pharmacies.EntityFramework", "Pharmacies.EntityFramework\Pharmacies.EntityFramework.csproj", "{912CA210-B080-42C5-8A1A-A45AFE52B334}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pharmacies.Client", "Pharmacies.Client\Pharmacies.Client.csproj", "{B9454F98-B721-48E7-85CC-8DFC64EF303F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pharmacies.Client", "Pharmacies.Client\Pharmacies.Client.csproj", "{B9454F98-B721-48E7-85CC-8DFC64EF303F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
