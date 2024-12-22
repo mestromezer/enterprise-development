@@ -1,6 +1,7 @@
 ﻿@page "/prices"
 @using global::Pharmacies.Client.OpenApiService
 @inject IPharmaciesApiWrapper ApiWrapper
+@attribute [Authorize]
 
 <h3>Цены</h3>
 

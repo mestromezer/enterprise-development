@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Pharmacies.Domain.Tests;
 using Pharmacies.Model;
 using Pharmacies.Model.Reference;
 
@@ -60,6 +61,8 @@ public sealed class PharmacyMySqlContext : DbContext
         modelBuilder.Entity<Pharmacy>()
             .HasKey(ph => ph.Number);
 
+        modelBuilder.Entity<Pharmacy>().HasData(PharmaciesModelsTestsDataSeed.Pharmacies);
+
         // ProductGroup
         modelBuilder.Entity<ProductGroup>()
             .HasKey(pg => pg.Id);
@@ -67,6 +70,7 @@ public sealed class PharmacyMySqlContext : DbContext
         // Price
         modelBuilder.Entity<Price>()
             .HasKey(pr => pr.Id);
+        modelBuilder.Entity<Price>().HasData(PharmaciesModelsTestsDataSeed.Prices);
 
         // PharmaceuticalGroup
         modelBuilder.Entity<PharmaceuticalGroup>()
